@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+<TableLayout 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+        
+	<TableRow
+		android:id="@+id/tableRow1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" >
+		
+		<TextView
+		android:id="@+id/addDialogNameConstTextView"
+		android:layout_width="80sp"
+		android:layout_height="wrap_content"
+		android:text="Product :" 
+		android:textAppearance="?android:attr/textAppearanceMedium" 
+		android:paddingBottom="30sp"/>
+
+		<EditText
+		    android:id="@+id/addDialogNameEditText"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:inputType="text"
+		    android:ems="10" >
+
+		    <requestFocus />
+		</EditText>
+
+	</TableRow>
+	<TableRow
+		android:id="@+id/tableRow2"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" >
+		
+		<TextView
+			android:id="@+id/addDialogConstLocationTextView"
+			android:layout_width="80sp"
+			android:layout_height="wrap_content"
+			android:text="Location :"
+			android:textAppearance="?android:attr/textAppearanceMedium" 
+			android:paddingBottom="30sp"/>
+		
+		<TextView
+			android:id="@+id/addDialogLocationTextView"
+			android:layout_width="190sp"
+			android:layout_height="wrap_content"/>
+			
+	</TableRow>
+		<TableRow
+		android:id="@+id/tableRow3"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" >
+		
+		<TextView
+			android:id="@+id/addDialogConstPriceTextView"
+			android:layout_width="80sp"
+			android:layout_height="wrap_content"
+			android:text="Price :"
+			android:textAppearance="?android:attr/textAppearanceMedium" 
+			android:paddingBottom="30sp"/>
+		
+		<EditText
+		    android:id="@+id/addDialogPriceEditText"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:inputType="numberDecimal"
+		    android:ems="10" >
+		</EditText>
+	</TableRow>
+	
+	<TableRow
+		android:id="@+id/tableRow4"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" >
+		
+		<TextView
+			android:id="@+id/addDialogConstPerUnitTextView"
+			android:layout_width="80sp"
+			android:layout_height="wrap_content"
+			android:text="Per Unit :"
+			android:textAppearance="?android:attr/textAppearanceMedium" 
+			android:paddingBottom="30sp"/>
+		
+		<EditText
+		    android:id="@+id/addDialogPerUnitEditText"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:inputType="text"
+		    android:ems="10" >
+		</EditText>
+	</TableRow>
+	
+		<TableRow
+		android:id="@+id/tableRow4"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" >
+		
+		<TextView
+			android:id="@+id/addDialogDescriptionUnitTextView"
+			android:layout_width="105sp"
+			android:layout_height="wrap_content"
+			android:text="Description:"
+			android:textAppearance="?android:attr/textAppearanceMedium" 
+			android:paddingBottom="30sp"/>
+		
+		<EditText
+		    android:id="@+id/addDialogDescriptionEditText"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:inputType="textMultiLine"
+		    android:ems="10" >
+		</EditText>
+	</TableRow>
+	
+	<TableRow
+		android:id="@+id/tableRow5"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" >
+
+		<ImageView
+		    android:id="@+id/imageView1"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:src="@android:drawable/screen_background_light_transparent" />
+
+	</TableRow>	
+	
+		<TableRow
+		android:id="@+id/tableRow6"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" >
+
+			<Button
+			    android:id="@+id/addDialogCancelButton"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="Cancel" />
+
+			<Button
+			    android:id="@+id/addDialogOkButton"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="OKAY!" />
+
+	</TableRow>		
+		
+</TableLayout>
+</ScrollView>

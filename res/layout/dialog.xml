@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+<TableLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+       <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/dialogNameConstTextView"
+                android:layout_width="80sp"
+                android:layout_height="wrap_content"
+                android:text="Product :" 
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:paddingBottom="30sp"/>
+
+            <TextView
+                android:id="@+id/dialogNameTextView"
+                android:layout_width="190sp"
+                android:layout_height="wrap_content" >
+
+                <requestFocus />
+            </TextView>
+
+        </TableRow>
+        
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/dialogConstLocationTextView"
+                android:layout_width="80sp"
+                android:layout_height="wrap_content"
+                android:text="Location :"
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:paddingBottom="30sp"/>
+
+            <TextView
+                android:id="@+id/dialogLocationTextView"
+                android:layout_width="190sp"
+                android:layout_height="wrap_content"
+                android:textColor="#576586" />
+
+        </TableRow>
+
+        
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+            
+            <TextView
+                android:id="@+id/dialogConstPriceTextView"
+                android:layout_width="80sp"
+                android:layout_height="wrap_content"
+                android:text="Price:"
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:paddingBottom="30sp"/>
+
+            <TextView
+                android:id="@+id/dialogPriceTextView"
+                android:layout_width="190sp"
+                android:layout_height="wrap_content"/>
+
+        </TableRow>
+        
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+            <TextView
+                android:id="@+id/dialogConstDescriptionTextView"
+                android:layout_width="105sp"
+                android:layout_height="wrap_content"
+                android:text="Description:"
+                android:textAppearance="?android:attr/textAppearanceMedium" 
+                android:paddingBottom="50dp"/>
+
+            <TextView
+                android:id="@+id/dialogDescriptionTextView"
+                android:layout_width="165sp"
+                android:layout_height="wrap_content"/>
+            
+        </TableRow>
+        
+   
+
+        
+		<TableRow
+            android:id="@+id/tableRow5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">    
+
+
+            <ImageView
+                android:id="@+id/dialogImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+        
+			<TableRow
+            android:id="@+id/tableRow6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">    
+            <Button
+                android:id="@+id/dialogOkButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OK"/>
+
+
+        </TableRow>
+</TableLayout>
+</ScrollView>
