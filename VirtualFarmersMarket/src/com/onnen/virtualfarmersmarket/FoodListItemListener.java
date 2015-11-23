@@ -1,12 +1,16 @@
 package com.onnen.virtualfarmersmarket;
 
-import com.onnen.virtualfamersmarket.R;
-import com.onnen.virtualfarmersmarket.MainActivity.FoodListAdapter;
+import com.onnen.virtualfarmersmarket.MainAct.FoodListAdapter;
+import com.onnen.virtualfarmersmarket.utils.AppUtils;
+import com.onnen.virtualfarmersmarket.utils.CacheingEngine;
+
 
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.view.View;
@@ -28,6 +32,7 @@ public class FoodListItemListener implements OnItemClickListener, OnClickListene
 	private Context parent;
 	private Dialog d;
 	private FoodItem f;
+	private CacheingEngine cache;
 	FoodListAdapter listAdapter;
 	
 	public FoodListItemListener(Context parent, FoodListAdapter listAdapter) {
@@ -36,14 +41,16 @@ public class FoodListItemListener implements OnItemClickListener, OnClickListene
 										// use list adapter instead of food list 
 										// due to a view being linked to the listAdapter
 										// that can be compared to in onItemClick routine
+		this.cache = CacheingEngine.getInstance();
 	}
 	
 	private void ShowDialog() {
 		// create dialog
-		d = new Dialog(parent);
+		d = new Dialog(parent, R.style.MyCoolDialog);
 		d.setContentView(R.layout.dialog);
 		d.setCancelable(true);
-		
+		d.setTitle(f.userName);
+
 		// bring dialog views into scope
 		Button okButton = (Button) d.findViewById(R.id.dialogOkButton);;
 		TextView price = (TextView) d.findViewById(R.id.dialogPriceTextView);
@@ -57,14 +64,23 @@ public class FoodListItemListener implements OnItemClickListener, OnClickListene
 		location.setOnClickListener(this);
 		
 		// set dialog view values
-		price.setText('$' + f.price.toString() + f.perUnit);
+		price.setText(f.price.toString() +" / " + f.perUnit);
 		description.setText(f.description);
 		
 		location.setText(f.location );
 		// underline location to make it look clickable
 		location.setPaintFlags(location.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG); // bitwise or
 		name.setText(f.name);
-		image.setImageBitmap(f.imageFile);
+		if(f.imageFile != null) {
+			image.setImageBitmap(f.imageFile);
+		}else {
+			byte imgData[] = cache.Get(AppUtils.BuildImageUrlFromEntryId(f.entryId));
+			if(imgData != null) {
+				image.setImageBitmap(Bitmap.createScaledBitmap(
+						BitmapFactory.decodeByteArray(imgData, 0, imgData.length), 
+						240, 240, true));
+			}
+		}
 		// show dialog
 		d.show();
 	}
