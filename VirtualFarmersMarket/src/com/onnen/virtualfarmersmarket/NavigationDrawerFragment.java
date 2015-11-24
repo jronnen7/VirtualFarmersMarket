@@ -104,6 +104,7 @@ public class NavigationDrawerFragment extends Fragment {
 						android.R.id.text1, new String[] { getString(R.string.title_section1),
 								getString(R.string.title_section2), getString(R.string.title_section3), }));
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+
 		return mDrawerListView;
 	}
 
@@ -131,6 +132,7 @@ public class NavigationDrawerFragment extends Fragment {
 
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
+		
 		actionBar.setHomeButtonEnabled(true);
 
 		// ActionBarDrawerToggle ties together the the proper interactions
@@ -160,6 +162,7 @@ public class NavigationDrawerFragment extends Fragment {
 				getActivity().supportInvalidateOptionsMenu(); // calls
 																// onPrepareOptionsMenu()
 			}
+			
 
 			@Override
 			public void onDrawerOpened(View drawerView) {
@@ -181,7 +184,7 @@ public class NavigationDrawerFragment extends Fragment {
 																// onPrepareOptionsMenu()
 			}
 		};
-
+		mDrawerToggle.setDrawerIndicatorEnabled(true);
 		// If the user hasn't 'learned' about the drawer, open it to introduce
 		// them to the drawer,
 		// per the navigation drawer design guidelines.

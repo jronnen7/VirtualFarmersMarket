@@ -71,13 +71,13 @@ public class MainListFrag extends Fragment implements LocationListener {
 	private CacheingEngine cache;
 	
 	private static MainListFrag singleton;
-	private MainListFrag(Context context) {
-		this.mContext = context;
+	private MainListFrag() {
+		this.mContext = getActivity();
 	}
 
-	public static MainListFrag GetInstance(Context mContext) {
+	public static MainListFrag GetInstance() {
 		if(singleton == null) {
-			singleton = new MainListFrag(mContext);
+			singleton = new MainListFrag();
 		}return singleton;
 	}
 	@Override

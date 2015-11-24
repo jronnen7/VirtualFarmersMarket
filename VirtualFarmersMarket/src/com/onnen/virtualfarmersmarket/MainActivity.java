@@ -52,7 +52,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		
 		if(position == 0) {
-			mainListView = MainListFrag.GetInstance(this);
+			mainListView = MainListFrag.GetInstance();
 			fragmentManager.beginTransaction().replace(R.id.container, mainListView )
 			.commit();
 		} 
