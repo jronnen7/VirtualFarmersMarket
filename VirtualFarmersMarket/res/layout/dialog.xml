@@ -2,14 +2,16 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-<TableLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
 
-       <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+    <LinearLayout
+        android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:padding="15dp">
+       <LinearLayout
+	        android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/dialogNameConstTextView"
@@ -27,12 +29,12 @@
                 <requestFocus />
             </TextView>
 
-        </TableRow>
+        </LinearLayout>
         
-        <TableRow
-            android:id="@+id/tableRow2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+       <LinearLayout
+	        android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/dialogConstLocationTextView"
@@ -48,13 +50,13 @@
                 android:layout_height="wrap_content"
                 android:textColor="#576586" />
 
-        </TableRow>
+        </LinearLayout>
 
         
-        <TableRow
-            android:id="@+id/tableRow3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+       <LinearLayout
+	        android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal">
             
             <TextView
                 android:id="@+id/dialogConstPriceTextView"
@@ -69,12 +71,12 @@
                 android:layout_width="190sp"
                 android:layout_height="wrap_content"/>
 
-        </TableRow>
+        </LinearLayout>
         
-        <TableRow
-            android:id="@+id/tableRow4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+       <LinearLayout
+	        android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal">
             <TextView
                 android:id="@+id/dialogConstDescriptionTextView"
                 android:layout_width="105sp"
@@ -88,34 +90,25 @@
                 android:layout_width="165sp"
                 android:layout_height="wrap_content"/>
             
-        </TableRow>
+        </LinearLayout>
         
    
 
         
-		<TableRow
-            android:id="@+id/tableRow5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">    
 
 
             <ImageView
                 android:id="@+id/dialogImageView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </TableRow>
-        
-			<TableRow
-            android:id="@+id/tableRow6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">    
+                android:layout_height="wrap_content" 
+                android:contentDescription="placeHolderForProduceImage"/>
+  
             <Button
                 android:id="@+id/dialogOkButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="OK"/>
 
 
-        </TableRow>
-</TableLayout>
+</LinearLayout>
 </ScrollView>

@@ -1,46 +1,34 @@
 package com.onnen.virtualfarmersmarket;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.onnen.virtualfarmersmarket.R;
-import com.onnen.virtualfarmersmarket.R.id;
-import com.onnen.virtualfarmersmarket.R.layout;
 import com.onnen.virtualfarmersmarket.utils.AppUtils;
 import com.onnen.virtualfarmersmarket.utils.CacheingEngine;
-import com.onnen.virtualfarmersmarket.utils.CsvStringToMap;
 import com.onnen.virtualfarmersmarket.utils.LatLongToAddress;
 import com.onnen.virtualfarmersmarket.utils.ServiceHandler;
 
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-import android.util.Pair;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,17 +41,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.provider.MediaStore;
 
-// This framework is the beginning of a much more complex framework that will integrate
-// client server, to update the listView, we will also need to notify the server of our current/desired
-// location to find food and it will return the closest results to me. (Summer project)
-// as of right now this is the front-end of the application, it integrates the camera, GPS,
-// and WI-FI to capture the location and of the device then trys to convert the Lat, and Long
-// to a readable address.  It also allows you to take a picture then add description about the
-// picture, while adding the description it resolves the devices current location and 
-// updates the location description
-public class MainAct extends ActionBarActivity implements LocationListener {
+public class MainListFrag extends Fragment implements LocationListener {
+
 	public ListView listView;
 	public FoodListAdapter listAdapter;
 	public FoodListItemListener listItemListener;
@@ -89,12 +69,21 @@ public class MainAct extends ActionBarActivity implements LocationListener {
 	private ServiceHandler mServiceHandler;
 	private Context mContext;
 	private CacheingEngine cache;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+	
+	private static MainListFrag singleton;
+	private MainListFrag(Context context) {
+		this.mContext = context;
+	}
 
-        ImageButton camera = (ImageButton) findViewById(R.id.cameraButton);
+	public static MainListFrag GetInstance(Context mContext) {
+		if(singleton == null) {
+			singleton = new MainListFrag(mContext);
+		}return singleton;
+	}
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.main_list_frag, container, false);
+		ImageButton camera = (ImageButton) rootView.findViewById(R.id.cameraButton);
         camera.setOnClickListener(new OnClickListener() {
         	@Override
 			public void onClick(View arg0) {
@@ -103,14 +92,13 @@ public class MainAct extends ActionBarActivity implements LocationListener {
         	
         });
         
-        mContext = this;
         cache = CacheingEngine.getInstance();
         mServiceHandler = new ServiceHandler();
-        locationConverter = new LatLongToAddress(this);
+        locationConverter = new LatLongToAddress(mContext);
         foodList = new ArrayList<FoodItem>(10);
-        listView = (ListView) findViewById(R.id.foodList);	
-        listAdapter = new FoodListAdapter(MainAct.this, R.layout.row_food_item_list, foodList);
-        listItemListener = new FoodListItemListener(this, listAdapter);
+        listView = (ListView) rootView.findViewById(R.id.foodList);	
+        listAdapter = new FoodListAdapter(mContext, R.layout.row_food_item_list, foodList);
+        listItemListener = new FoodListItemListener(mContext, listAdapter);
         listView.setAdapter(this.listAdapter);
         listView.setOnItemClickListener(listItemListener);
         
@@ -119,11 +107,25 @@ public class MainAct extends ActionBarActivity implements LocationListener {
 		parametersList.add(new Pair<String,String>("vfmCurrentLoc", "23,-123.123122"));
 		 
 		new DownloadListTask().execute(parametersList);
-    }
+		
+		
 
-	// array adapter with overloaded getView to get views for each item.
-    // Allows interfacing between the listView, a row in the list,
-    // and the actual list of data
+		
+		
+		
+		return rootView;
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+	}
+
+	public Fragment ToFragment() {
+		return this;
+	}
+	
 	public class FoodListAdapter extends ArrayAdapter<FoodItem> {
 		private ArrayList<FoodItem> items;
 		private View v;
@@ -138,7 +140,7 @@ public class MainAct extends ActionBarActivity implements LocationListener {
         public View getView(int position, View convertView, ViewGroup parent) {
             v = convertView;
             if (v == null) {
-                LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.row_food_item_list, null);
             }
             FoodItem f = items.get(position);
@@ -181,7 +183,7 @@ public class MainAct extends ActionBarActivity implements LocationListener {
     private void TakePicture()
 	{
 	    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-	    Toast.makeText(this, "Take Picture to Add Item to List", Toast.LENGTH_LONG).show();
+	    Toast.makeText(mContext, "Take Picture to Add Item to List", Toast.LENGTH_LONG).show();
 	    // use this routine to have it call onActivityResult when it is finished with the pic
 	    startActivityForResult(intent, 0);
 	}
@@ -189,9 +191,8 @@ public class MainAct extends ActionBarActivity implements LocationListener {
     // when activity is returened to from camera...
     // this routine can get called several other ways so we need to ensure
     // that the camera routine returned successfully before trying to capture the image
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-       super.onActivityResult(requestCode, resultCode, data);
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
        if(addDialog!= null) {
 	       if(addDialog.isShowing()) {
 	    	   addDialog.dismiss();
@@ -203,7 +204,7 @@ public class MainAct extends ActionBarActivity implements LocationListener {
     	    // make a listener for the location so when the user clicks it the location updates
 	       	// make a listener for the add dialog class
 	       	DismissAddDialogListener dialogListener = new DismissAddDialogListener();
-	       	addDialog = new Dialog(this); // create dialog
+	       	addDialog = new Dialog(mContext); // create dialog
 			addDialog.setContentView(R.layout.add_dialog); // set background
 			addDialog.setCancelable(true); // click outside the box dismisses it
 			
@@ -230,7 +231,7 @@ public class MainAct extends ActionBarActivity implements LocationListener {
 			image.setImageBitmap(imageBitmap);
 	       
 	        //Request Location Updates
-			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+			locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 	        RequestLocationUpdates(); 
        }
     }
@@ -313,7 +314,7 @@ public class MainAct extends ActionBarActivity implements LocationListener {
 	public void RequestLocationUpdates() {
 		if(locationManager != null) {
 			// request GPS Updates
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, MainAct.this);
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 			// request Wi-Fi updates
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 		}
@@ -443,7 +444,4 @@ public class MainAct extends ActionBarActivity implements LocationListener {
 		
 
 	}
-	
-	
-	
 }

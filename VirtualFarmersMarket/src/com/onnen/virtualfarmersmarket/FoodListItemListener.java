@@ -1,6 +1,7 @@
 package com.onnen.virtualfarmersmarket;
 
-import com.onnen.virtualfarmersmarket.MainAct.FoodListAdapter;
+
+import com.onnen.virtualfarmersmarket.MainListFrag.FoodListAdapter;
 import com.onnen.virtualfarmersmarket.utils.AppUtils;
 import com.onnen.virtualfarmersmarket.utils.CacheingEngine;
 
@@ -22,11 +23,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-// class is used to perform an action when a item in the list is clicked on,
-// opening a dialog box showing the additional information regarding that item
-// the class implements onClickListener for the dialog box.
-// It also starts an activity when the location is clicked on giving the user directions if the 
-// google navigation app is installed on the device
 public class FoodListItemListener implements OnItemClickListener, OnClickListener {
 	
 	private Context parent;

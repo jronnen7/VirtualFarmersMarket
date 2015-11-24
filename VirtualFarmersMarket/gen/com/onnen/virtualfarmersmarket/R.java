@@ -1904,11 +1904,26 @@ containing a value of this type.
  Default text size for action bar title.
          */
         public static final int abc_text_size_title_material_toolbar=0x7f070028;
+        /**  Default screen margins, per the Android Design guidelines. 
+
+         Example customization of dimensions originally defined in res/values/dimens.xml
+         (such as screen margins) for screens with more than 820dp of available width. This
+         would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
+    
+         */
+        public static final int activity_horizontal_margin=0x7f07004b;
+        public static final int activity_vertical_margin=0x7f07004c;
         public static final int disabled_alpha_material_dark=0x7f070001;
         public static final int disabled_alpha_material_light=0x7f070000;
         public static final int highlight_alpha_material_colored=0x7f070004;
         public static final int highlight_alpha_material_dark=0x7f070003;
         public static final int highlight_alpha_material_light=0x7f070002;
+        /** 
+         Per the design guidelines, navigation drawers should be between 240dp and 320dp:
+         https://developer.android.com/design/patterns/navigation-drawer.html
+    
+         */
+        public static final int navigation_drawer_width=0x7f07004d;
         /**  The width of the big icons in notifications. 
          */
         public static final int notification_large_icon_height=0x7f070026;
@@ -1990,12 +2005,14 @@ containing a value of this type.
         public static final int abc_textfield_search_activated_mtrl_alpha=0x7f020042;
         public static final int abc_textfield_search_default_mtrl_alpha=0x7f020043;
         public static final int abc_textfield_search_material=0x7f020044;
-        public static final int ic_launcher=0x7f020045;
-        public static final int notification_template_icon_bg=0x7f020047;
-        public static final int plus=0x7f020046;
+        public static final int drawer_shadow=0x7f020045;
+        public static final int ic_drawer=0x7f020046;
+        public static final int ic_launcher=0x7f020047;
+        public static final int notification_template_icon_bg=0x7f020049;
+        public static final int plus=0x7f020048;
     }
     public static final class id {
-        public static final int action0=0x7f09006f;
+        public static final int action0=0x7f090072;
         public static final int action_bar=0x7f090041;
         public static final int action_bar_activity_content=0x7f090003;
         public static final int action_bar_container=0x7f090040;
@@ -2004,74 +2021,79 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f090022;
         public static final int action_bar_title=0x7f090021;
         public static final int action_context_bar=0x7f090042;
-        public static final int action_divider=0x7f090073;
+        public static final int action_divider=0x7f090076;
+        public static final int action_example=0x7f090084;
         public static final int action_menu_divider=0x7f090005;
         public static final int action_menu_presenter=0x7f090006;
         public static final int action_mode_bar=0x7f09003e;
         public static final int action_mode_bar_stub=0x7f09003d;
         public static final int action_mode_close_button=0x7f090023;
+        public static final int action_settings=0x7f090083;
         public static final int activity_chooser_view_content=0x7f090024;
-        public static final int addDialogCancelButton=0x7f090063;
-        public static final int addDialogConstLocationTextView=0x7f090056;
-        public static final int addDialogConstPerUnitTextView=0x7f09005c;
-        public static final int addDialogConstPriceTextView=0x7f090059;
-        public static final int addDialogDescriptionEditText=0x7f09005f;
-        public static final int addDialogDescriptionUnitTextView=0x7f09005e;
-        public static final int addDialogLocationTextView=0x7f090057;
-        public static final int addDialogNameConstTextView=0x7f090053;
-        public static final int addDialogNameEditText=0x7f090054;
-        public static final int addDialogOkButton=0x7f090064;
-        public static final int addDialogPerUnitEditText=0x7f09005d;
-        public static final int addDialogPriceEditText=0x7f09005a;
+        public static final int addDialogCancelButton=0x7f090064;
+        public static final int addDialogConstLocationTextView=0x7f090057;
+        public static final int addDialogConstPerUnitTextView=0x7f09005d;
+        public static final int addDialogConstPriceTextView=0x7f09005a;
+        public static final int addDialogDescriptionEditText=0x7f090060;
+        public static final int addDialogDescriptionUnitTextView=0x7f09005f;
+        public static final int addDialogLocationTextView=0x7f090058;
+        public static final int addDialogNameConstTextView=0x7f090054;
+        public static final int addDialogNameEditText=0x7f090055;
+        public static final int addDialogOkButton=0x7f090065;
+        public static final int addDialogPerUnitEditText=0x7f09005e;
+        public static final int addDialogPriceEditText=0x7f09005b;
         public static final int alertTitle=0x7f090030;
         public static final int always=0x7f090019;
         public static final int beginning=0x7f09001e;
         public static final int buttonPanel=0x7f09002b;
-        public static final int cameraButton=0x7f090050;
-        public static final int cancel_action=0x7f090070;
+        public static final int cameraButton=0x7f090070;
+        public static final int cancel_action=0x7f090073;
         public static final int checkbox=0x7f090039;
-        public static final int chronometer=0x7f090076;
+        public static final int chronometer=0x7f090079;
         public static final int collapseActionView=0x7f09001a;
+        public static final int container=0x7f090051;
         public static final int contentPanel=0x7f090031;
         public static final int custom=0x7f090037;
         public static final int customPanel=0x7f090036;
         public static final int decor_content_parent=0x7f09003f;
         public static final int default_activity_button=0x7f090027;
-        public static final int dialogConstDescriptionTextView=0x7f09006b;
-        public static final int dialogConstLocationTextView=0x7f090067;
-        public static final int dialogConstPriceTextView=0x7f090069;
-        public static final int dialogDescriptionTextView=0x7f09006c;
-        public static final int dialogImageView=0x7f09006d;
-        public static final int dialogLocationTextView=0x7f090068;
-        public static final int dialogNameConstTextView=0x7f090065;
-        public static final int dialogNameTextView=0x7f090066;
-        public static final int dialogOkButton=0x7f09006e;
-        public static final int dialogPriceTextView=0x7f09006a;
+        public static final int dialogConstDescriptionTextView=0x7f09006c;
+        public static final int dialogConstLocationTextView=0x7f090068;
+        public static final int dialogConstPriceTextView=0x7f09006a;
+        public static final int dialogDescriptionTextView=0x7f09006d;
+        public static final int dialogImageView=0x7f09006e;
+        public static final int dialogLocationTextView=0x7f090069;
+        public static final int dialogNameConstTextView=0x7f090066;
+        public static final int dialogNameTextView=0x7f090067;
+        public static final int dialogOkButton=0x7f09006f;
+        public static final int dialogPriceTextView=0x7f09006b;
         public static final int disableHome=0x7f09000d;
+        public static final int drawer_layout=0x7f090050;
         public static final int edit_query=0x7f090043;
         public static final int end=0x7f09001f;
-        public static final int end_padder=0x7f09007b;
+        public static final int end_padder=0x7f09007e;
         public static final int expand_activities_button=0x7f090025;
         public static final int expanded_menu=0x7f090038;
-        public static final int foodList=0x7f090051;
+        public static final int foodList=0x7f090071;
         public static final int home=0x7f090000;
         public static final int homeAsUp=0x7f09000e;
         public static final int icon=0x7f090029;
         public static final int ifRoom=0x7f09001b;
         public static final int image=0x7f090026;
-        public static final int imageView1=0x7f090061;
-        public static final int info=0x7f09007a;
-        public static final int line1=0x7f090074;
-        public static final int line3=0x7f090078;
+        public static final int imageView1=0x7f090062;
+        public static final int info=0x7f09007d;
+        public static final int line1=0x7f090077;
+        public static final int line3=0x7f09007b;
         public static final int listMode=0x7f09000a;
         public static final int list_item=0x7f090028;
-        public static final int listview_location=0x7f09007e;
-        public static final int listview_name=0x7f09007c;
-        public static final int listview_picture=0x7f09007f;
-        public static final int listview_price=0x7f09007d;
-        public static final int media_actions=0x7f090072;
+        public static final int listview_location=0x7f090081;
+        public static final int listview_name=0x7f09007f;
+        public static final int listview_picture=0x7f090082;
+        public static final int listview_price=0x7f090080;
+        public static final int media_actions=0x7f090075;
         public static final int middle=0x7f090020;
         public static final int multiply=0x7f090014;
+        public static final int navigation_drawer=0x7f090052;
         public static final int never=0x7f09001c;
         public static final int none=0x7f09000f;
         public static final int normal=0x7f09000b;
@@ -2103,19 +2125,19 @@ containing a value of this type.
         public static final int src_atop=0x7f090016;
         public static final int src_in=0x7f090017;
         public static final int src_over=0x7f090018;
-        public static final int status_bar_latest_event_content=0x7f090071;
+        public static final int status_bar_latest_event_content=0x7f090074;
         public static final int submit_area=0x7f09004c;
         public static final int tabMode=0x7f09000c;
-        public static final int tableRow1=0x7f090052;
-        public static final int tableRow2=0x7f090055;
-        public static final int tableRow3=0x7f090058;
-        public static final int tableRow4=0x7f09005b;
-        public static final int tableRow5=0x7f090060;
-        public static final int tableRow6=0x7f090062;
-        public static final int text=0x7f090079;
-        public static final int text2=0x7f090077;
+        public static final int tableRow1=0x7f090053;
+        public static final int tableRow2=0x7f090056;
+        public static final int tableRow3=0x7f090059;
+        public static final int tableRow4=0x7f09005c;
+        public static final int tableRow5=0x7f090061;
+        public static final int tableRow6=0x7f090063;
+        public static final int text=0x7f09007c;
+        public static final int text2=0x7f09007a;
         public static final int textSpacerNoButtons=0x7f090034;
-        public static final int time=0x7f090075;
+        public static final int time=0x7f090078;
         public static final int title=0x7f09002a;
         public static final int title_template=0x7f09002f;
         public static final int topPanel=0x7f09002e;
@@ -2189,19 +2211,25 @@ containing a value of this type.
         public static final int activity_main=0x7f030019;
         public static final int add_dialog=0x7f03001a;
         public static final int dialog=0x7f03001b;
-        public static final int notification_media_action=0x7f03001c;
-        public static final int notification_media_cancel_action=0x7f03001d;
-        public static final int notification_template_big_media=0x7f03001e;
-        public static final int notification_template_big_media_narrow=0x7f03001f;
-        public static final int notification_template_lines=0x7f030020;
-        public static final int notification_template_media=0x7f030021;
-        public static final int notification_template_part_chronometer=0x7f030022;
-        public static final int notification_template_part_time=0x7f030023;
-        public static final int row_food_item_list=0x7f030024;
-        public static final int select_dialog_item_material=0x7f030025;
-        public static final int select_dialog_multichoice_material=0x7f030026;
-        public static final int select_dialog_singlechoice_material=0x7f030027;
-        public static final int support_simple_spinner_dropdown_item=0x7f030028;
+        public static final int main_list_frag=0x7f03001c;
+        public static final int navigation_drawer_frag=0x7f03001d;
+        public static final int notification_media_action=0x7f03001e;
+        public static final int notification_media_cancel_action=0x7f03001f;
+        public static final int notification_template_big_media=0x7f030020;
+        public static final int notification_template_big_media_narrow=0x7f030021;
+        public static final int notification_template_lines=0x7f030022;
+        public static final int notification_template_media=0x7f030023;
+        public static final int notification_template_part_chronometer=0x7f030024;
+        public static final int notification_template_part_time=0x7f030025;
+        public static final int row_food_item_list=0x7f030026;
+        public static final int select_dialog_item_material=0x7f030027;
+        public static final int select_dialog_multichoice_material=0x7f030028;
+        public static final int select_dialog_singlechoice_material=0x7f030029;
+        public static final int support_simple_spinner_dropdown_item=0x7f03002a;
+    }
+    public static final class menu {
+        public static final int global=0x7f0c0000;
+        public static final int main=0x7f0c0001;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -2269,8 +2297,11 @@ containing a value of this type.
         /**  Content description for the Toolbar icon used to collapse an expanded action mode. [CHAR LIMIT=NONE] 
          */
         public static final int abc_toolbar_collapse_description=0x7f0a0004;
+        public static final int action_example=0x7f0a001a;
+        public static final int action_settings=0x7f0a001b;
         public static final int app_name=0x7f0a0014;
-        public static final int hello_world=0x7f0a0015;
+        public static final int navigation_drawer_close=0x7f0a0019;
+        public static final int navigation_drawer_open=0x7f0a0018;
         /**  Text to use when the number in a notification info is too large
          (greater than status_bar_notification_info_maxnum, defined in
          values/config.xml) and must be truncated. May need to be localized
@@ -2278,6 +2309,9 @@ containing a value of this type.
          [CHAR LIMIT=4] 
          */
         public static final int status_bar_notification_info_overflow=0x7f0a0011;
+        public static final int title_section1=0x7f0a0015;
+        public static final int title_section2=0x7f0a0016;
+        public static final int title_section3=0x7f0a0017;
     }
     public static final class style {
         public static final int AlertDialog_AppCompat=0x7f0b0042;

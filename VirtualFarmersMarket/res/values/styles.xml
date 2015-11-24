@@ -16,10 +16,8 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    
-    <style name="MyCoolDialog" parent="android:Theme.Dialog"> 
+
+        <style name="MyCoolDialog" parent="android:Theme.Dialog"> 
         <item name="android:colorForeground">#f0f0f0</item> 
      </style> 
-
-
 </resources>
