@@ -7,7 +7,19 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="21" />
- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    
+        <permission
+        android:name="com.onnen.android.locationapi.maps.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-permission android:name="com.onnen.android.locationapi.maps.permission.MAPS_RECEIVE" />
+    
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission
@@ -20,6 +32,7 @@
 	<uses-permission android:name="android.permission.INTERNET" />
     <uses-feature android:name="android.hardware.camera"
                   android:required="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -36,5 +49,10 @@
             </intent-filter>
         </activity>
     </application>
+    
+    
+    <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyBN_RaU9ue7h6cqqZS9f3AUY0RW2rXbYxU" />
 
 </manifest>

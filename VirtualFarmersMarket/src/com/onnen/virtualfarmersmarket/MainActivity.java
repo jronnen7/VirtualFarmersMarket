@@ -1,9 +1,7 @@
 package com.onnen.virtualfarmersmarket;
 
-import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +31,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	 */
 	private CharSequence mTitle;
 	private MainListFrag mainListView;
+	private MainMapFrag mainMapView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,8 +51,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		
 		if(position == 0) {
-			mainListView = MainListFrag.GetInstance();
+			mainListView = MainListFrag.GetInstance(this);
 			fragmentManager.beginTransaction().replace(R.id.container, mainListView )
+			.commit();
+		} 
+		else if(position == 1) {
+			mainMapView = MainMapFrag.GetInstance(this);
+			fragmentManager.beginTransaction().replace(R.id.container, mainMapView )
 			.commit();
 		} 
 		
@@ -63,6 +67,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		switch (number) {
 		case 1:
 			mTitle = getString(R.string.title_section1);
+			if(mainListView != null) {
+		    	   mainListView.NotifyView();
+		    }
 			break;
 		case 2:
 			mTitle = getString(R.string.title_section2);

@@ -69,57 +69,61 @@ public class MainListFrag extends Fragment implements LocationListener {
 	private ServiceHandler mServiceHandler;
 	private Context mContext;
 	private CacheingEngine cache;
-	
+	private boolean isFirst = true;
 	private static MainListFrag singleton;
-	private MainListFrag() {
-		this.mContext = getActivity();
+	private MainListFrag(Context context) {
+		this.mContext = context;
+		foodList = new ArrayList<FoodItem>(10);
+		cache = CacheingEngine.getInstance();
+		mServiceHandler = new ServiceHandler();
+		locationConverter = new LatLongToAddress(mContext);
 	}
 
-	public static MainListFrag GetInstance() {
+	public static MainListFrag GetInstance(Context context) {
 		if(singleton == null) {
-			singleton = new MainListFrag();
+			singleton = new MainListFrag(context);
 		}return singleton;
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.main_list_frag, container, false);
+		
 		ImageButton camera = (ImageButton) rootView.findViewById(R.id.cameraButton);
         camera.setOnClickListener(new OnClickListener() {
         	@Override
 			public void onClick(View arg0) {
         		TakePicture();
 			}
-        	
         });
-        
-        cache = CacheingEngine.getInstance();
-        mServiceHandler = new ServiceHandler();
-        locationConverter = new LatLongToAddress(mContext);
-        foodList = new ArrayList<FoodItem>(10);
-        listView = (ListView) rootView.findViewById(R.id.foodList);	
-        listAdapter = new FoodListAdapter(mContext, R.layout.row_food_item_list, foodList);
-        listItemListener = new FoodListItemListener(mContext, listAdapter);
-        listView.setAdapter(this.listAdapter);
-        listView.setOnItemClickListener(listItemListener);
-        
-        List<Pair<String,String>> parametersList=new ArrayList<Pair<String,String>>();
-        parametersList.add(new Pair<String,String>("vfmReqId", AppUtils.DOWNLOAD_LIST_REQ_ID));
-		parametersList.add(new Pair<String,String>("vfmCurrentLoc", "23,-123.123122"));
+       
+		InitListView(rootView);
 		 
-		new DownloadListTask().execute(parametersList);
-		
-		
-
-		
-		
+		if(isFirst) {
+			DownloadFarmerMarketList();
+			isFirst = false;
+		} 
 		
 		return rootView;
+	}
+
+	private void InitListView(View rootView) {
+		listView = (ListView) rootView.findViewById(R.id.foodList);	
+		listAdapter = new FoodListAdapter(mContext, R.layout.row_food_item_list, foodList);
+		listItemListener = new FoodListItemListener(mContext, listAdapter);
+		listView.setAdapter(this.listAdapter);
+		listView.setOnItemClickListener(listItemListener);
+	}
+
+	private void DownloadFarmerMarketList() {
+		List<Pair<String,String>> parametersList=new ArrayList<Pair<String,String>>();
+		parametersList.add(new Pair<String,String>("vfmReqId", AppUtils.DOWNLOAD_LIST_REQ_ID));
+		parametersList.add(new Pair<String,String>("vfmCurrentLoc", "23,-123.123122"));
+		new DownloadListTask().execute(parametersList);
 	}
 
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-
 	}
 
 	public Fragment ToFragment() {
@@ -305,7 +309,7 @@ public class MainListFrag extends Fragment implements LocationListener {
 			// add it to the list
 			foodList.add(f);
 			// notify the view the list changed
-			Notify();
+			NotifyView();
 		}
 	}
 	
@@ -323,7 +327,7 @@ public class MainListFrag extends Fragment implements LocationListener {
 	// notify the listAdapter that additional view is added
 	// if anything addition needs to get notified moving forward i.e. the routine
 	// updating the main server it will get added here
-	private void Notify() {
+	public void NotifyView() {
 		if(listAdapter != null) {
 			listAdapter.notifyDataSetChanged();
 		}
@@ -361,7 +365,7 @@ public class MainListFrag extends Fragment implements LocationListener {
 					DownloadImagesAsyc(data);
 					ArrayList<FoodItem> serverList = AppUtils.GetFoodList(data, locationConverter);
 					foodList.addAll(serverList);
-					Notify();
+					NotifyView();
 				} catch (JSONException e) {
 					e.printStackTrace();
 
@@ -437,7 +441,7 @@ public class MainListFrag extends Fragment implements LocationListener {
 		        return null;
 		    }
 			protected void onPostExecute(Void result) {
-				Notify();
+				NotifyView();
 			}
 
 
