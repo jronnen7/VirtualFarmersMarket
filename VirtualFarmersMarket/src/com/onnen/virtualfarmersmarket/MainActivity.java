@@ -2,9 +2,18 @@ package com.onnen.virtualfarmersmarket;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.onnen.virtualfarmersmarket.utils.CacheingEngine;
+
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -17,7 +26,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
@@ -32,10 +41,16 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	private CharSequence mTitle;
 	private MainListFrag mainListView;
 	private MainMapFrag mainMapView;
+	private CacheingEngine cache;
+	private LocationManager m_lm;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		cache = CacheingEngine.getInstance();
+		m_lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		m_lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		m_lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.navigation_drawer);
@@ -56,9 +71,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			.commit();
 		} 
 		else if(position == 1) {
-			mainMapView = MainMapFrag.GetInstance(this);
+			mainMapView = MainMapFrag.GetInstance();
 			fragmentManager.beginTransaction().replace(R.id.container, mainMapView )
 			.commit();
+			
+			
 		} 
 		
 	}
@@ -106,19 +123,52 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
+		if (id == R.id.action_logout) {
+			LogOut();
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
-    @Override
+    private void LogOut() {
+		Intent i = new Intent(this,SplashAct.class);
+		startActivity(i);
+	}
+
+	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
        super.onActivityResult(requestCode, resultCode, data);
        if(mainListView != null) {
     	   mainListView.onActivityResult(requestCode, resultCode, data);
        }
     }
+
+	@Override
+	public void onLocationChanged(Location location) {
+		Double latitude = location.getLatitude();
+		Double longitude = location.getLongitude();
+		cache.Add("latitude", latitude);
+		cache.Add("longitude", longitude);
+		
+		m_lm.removeUpdates(this);
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }

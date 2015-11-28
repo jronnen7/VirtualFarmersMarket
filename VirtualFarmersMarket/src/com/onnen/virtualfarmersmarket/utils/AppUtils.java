@@ -12,6 +12,7 @@ import com.onnen.virtualfarmersmarket.FoodItem;
 public class AppUtils {
 	public static final String DOWNLOAD_LIST_REQ_ID = "304";
 	public static final String serverUrl = "http://vfm.lsp.goozmo.com/";
+	public static final String APP_PREFERENCES = "AppPrefs";
 	
 	
 	public static ArrayList<HashMap<String, String>> GetData(JSONObject rootObject) throws JSONException {

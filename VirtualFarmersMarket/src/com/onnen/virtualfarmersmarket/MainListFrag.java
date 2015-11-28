@@ -87,7 +87,21 @@ public class MainListFrag extends Fragment implements LocationListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.main_list_frag, container, false);
+		InitViews(rootView);
+		 
+		if(isFirst) {
+			DownloadFarmerMarketList();
+			locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+	        RequestLocationUpdates(); 
+			isFirst = false;
+		} 
 		
+
+		
+		return rootView;
+	}
+
+	private void InitViews(View rootView) {
 		ImageButton camera = (ImageButton) rootView.findViewById(R.id.cameraButton);
         camera.setOnClickListener(new OnClickListener() {
         	@Override
@@ -95,18 +109,6 @@ public class MainListFrag extends Fragment implements LocationListener {
         		TakePicture();
 			}
         });
-       
-		InitListView(rootView);
-		 
-		if(isFirst) {
-			DownloadFarmerMarketList();
-			isFirst = false;
-		} 
-		
-		return rootView;
-	}
-
-	private void InitListView(View rootView) {
 		listView = (ListView) rootView.findViewById(R.id.foodList);	
 		listAdapter = new FoodListAdapter(mContext, R.layout.row_food_item_list, foodList);
 		listItemListener = new FoodListItemListener(mContext, listAdapter);
@@ -235,7 +237,6 @@ public class MainListFrag extends Fragment implements LocationListener {
 			image.setImageBitmap(imageBitmap);
 	       
 	        //Request Location Updates
-			locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 	        RequestLocationUpdates(); 
        }
     }
@@ -246,6 +247,7 @@ public class MainListFrag extends Fragment implements LocationListener {
 		// save location of the device
 		latitude = arg0.getLatitude();
 		longitude = arg0.getLongitude();
+		
 		locationManager.removeUpdates(this);
 		locationConverter.SetLocation(latitude, longitude);
 		
@@ -280,6 +282,7 @@ public class MainListFrag extends Fragment implements LocationListener {
 				AddItem();
 			case R.id.addDialogCancelButton:
 				addDialog.dismiss();
+				addDialog = null;
 				break;
 			default:
 				addDialog.dismiss();
@@ -447,5 +450,11 @@ public class MainListFrag extends Fragment implements LocationListener {
 
 		
 
+	}
+
+	public static void SetNull() {
+		if(singleton != null) {
+			singleton = null;
+		}
 	}
 }
