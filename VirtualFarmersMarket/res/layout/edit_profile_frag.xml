@@ -1,0 +1,66 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF" >
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="15dp">
+    
+    <ImageView
+        android:id="@+id/edit_profile_edit_image"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:src="@drawable/profile_icon" />
+    
+    <TextView 
+        android:id="@+id/edit_profile_edit_image_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        android:gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingBottom="15dp"
+        />
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		<EditText
+		    android:id="@+id/edit_profile_first_name"
+			android:layout_width="1px"
+			android:layout_weight="1"
+			android:layout_height="wrap_content"
+			android:hint="First Name"
+			android:textAppearance="?android:attr/textAppearanceMedium" 
+		/>
+		<EditText
+		    android:id="@+id/edit_profile_last_name"		    
+			android:layout_width="1px"
+			android:layout_weight="1"
+			android:layout_height="wrap_content"
+			android:hint="Last Name"
+			android:textAppearance="?android:attr/textAppearanceMedium" 
+		/>
+	</LinearLayout>
+	
+	<EditText
+	   	android:id="@+id/edit_profile_email"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="Email"
+		android:inputType="textEmailAddress"
+		android:textAppearance="?android:attr/textAppearanceMedium" 
+	/>
+	
+	<Button
+	    android:id="@+id/edit_profile_submit_button"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Save"
+	    android:layout_marginBottom="30dp" />
+	
+</LinearLayout>
+</ScrollView>

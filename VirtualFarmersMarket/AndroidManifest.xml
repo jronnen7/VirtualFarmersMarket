@@ -49,9 +49,15 @@
             </intent-filter>
         </activity>
         
-        <activity  android:name="com.onnen.virtualfarmersmarket.MainActivity" android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait"/>
-        <activity  android:name="com.onnen.virtualfarmersmarket.LoginAct" android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait"/>
-        
+        <activity  android:name="com.onnen.virtualfarmersmarket.MainActivity" 
+            android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait"/>
+        <activity  android:name="com.onnen.virtualfarmersmarket.LoginAct" 
+            android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait"/>
+        <activity  android:name="com.onnen.virtualfarmersmarket.CreateAccountAct" 
+            android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait"/>
+        <activity  android:name="com.onnen.virtualfarmersmarket.ForgotPasswordAct" 
+            android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait"/>   
+                 
             <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBN_RaU9ue7h6cqqZS9f3AUY0RW2rXbYxU" />

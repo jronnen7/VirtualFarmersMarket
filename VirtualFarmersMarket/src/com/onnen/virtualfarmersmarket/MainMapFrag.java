@@ -35,14 +35,8 @@ public class MainMapFrag extends Fragment{
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = null;
-		try {
-			rootView = inflater.inflate(R.layout.main_map_frag, container, false);
-		 } catch (InflateException e) {
-			 rootView = inflater.inflate(R.layout.main_map_frag_error, container, false);
-		 }
+		rootView = inflater.inflate(R.layout.main_map_frag, container, false);
 		return rootView;
-		
-		
 	}
 	
 	@Override

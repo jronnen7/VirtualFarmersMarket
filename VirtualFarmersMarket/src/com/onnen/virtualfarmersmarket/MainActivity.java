@@ -5,6 +5,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.onnen.virtualfarmersmarket.utils.CacheingEngine;
@@ -25,8 +28,9 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener {
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
@@ -39,18 +43,22 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
+
+	private FragMenuTracker menu;
+	
 	private MainListFrag mainListView;
 	private MainMapFrag mainMapView;
-	private CacheingEngine cache;
-	private LocationManager m_lm;
+	private EditProfileFrag editProfileView;
+	private boolean canExit;
+	
+	public MainActivity() {
+		menu = new FragMenuTracker(3);
+		canExit = false;
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		cache = CacheingEngine.getInstance();
-		m_lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		m_lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-		m_lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.navigation_drawer);
@@ -65,18 +73,23 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		
+		Fragment f = null;
 		if(position == 0) {
 			mainListView = MainListFrag.GetInstance(this);
-			fragmentManager.beginTransaction().replace(R.id.container, mainListView )
-			.commit();
-		} 
-		else if(position == 1) {
+			f = mainListView;
+		}else if(position == 1) {
 			mainMapView = MainMapFrag.GetInstance();
-			fragmentManager.beginTransaction().replace(R.id.container, mainMapView )
+			f = mainMapView;
+		}else if(position == 2) {
+			editProfileView = EditProfileFrag.GetInstance();
+			f = editProfileView;
+		}  
+		
+		if(f != null) {
+			menu.Track(f);
+			fragmentManager.beginTransaction().replace(R.id.container, f )
 			.commit();
-			
-			
-		} 
+		}
 		
 	}
 
@@ -93,6 +106,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 			break;
 		case 3:
 			mTitle = getString(R.string.title_section3);
+			break;
+		case 4:
+			mTitle = getString(R.string.title_section4);
 			break;
 		}
 	}
@@ -142,33 +158,28 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
        }
     }
 
+	
 	@Override
-	public void onLocationChanged(Location location) {
-		Double latitude = location.getLatitude();
-		Double longitude = location.getLongitude();
-		cache.Add("latitude", latitude);
-		cache.Add("longitude", longitude);
+	public void onBackPressed() {
+		Fragment f = menu.BackTrack();
+		FragmentManager fragmentManager = getSupportFragmentManager();
 		
-		m_lm.removeUpdates(this);
+		if(f != null) {
+			fragmentManager.beginTransaction().replace(R.id.container, f )
+			.commit();
+		}else if(canExit) {
+		 	canExit = false;
+		 	moveTaskToBack(true);
+		}else  {
+			Toast.makeText(this, "Press back again to exit.", Toast.LENGTH_LONG).show();
+			canExit = true;
+			Timer timer = new Timer();
+			timer.schedule(new TimerTask() {
+			   public void run() {
+				   canExit = false;
+			   }
+			}, 5000);
+		}
 	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 }

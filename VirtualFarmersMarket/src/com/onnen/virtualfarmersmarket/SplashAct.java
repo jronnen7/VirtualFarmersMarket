@@ -33,7 +33,7 @@ public class SplashAct extends Activity {
 			   public void run() {
 				   StartLoginAct();
 			   }
-			}, 2700);
+			}, 1700);
 		}
 	}
 
@@ -50,6 +50,7 @@ public class SplashAct extends Activity {
 		// these singletons null for various reasons 
 		MainMapFrag.SetNull();
 		MainListFrag.SetNull();
+		EditProfileFrag.SetNull();
 		CacheingEngine.SetNull();
 	}
 
@@ -61,4 +62,6 @@ public class SplashAct extends Activity {
 		Intent i = new Intent(this,LoginAct.class);
 		startActivity(i);
 	}
+	
+	
 }

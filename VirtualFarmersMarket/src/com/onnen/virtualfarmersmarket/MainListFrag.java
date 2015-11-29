@@ -50,8 +50,6 @@ public class MainListFrag extends Fragment implements LocationListener {
 	private ImageView image;
 	private Double latitude;
 	private Double longitude;
-	private String address;
-	private String city;
 	protected LocationManager locationManager;
 	protected LocationListener locationListener;
 	protected LatLongToAddress locationConverter;
@@ -63,7 +61,6 @@ public class MainListFrag extends Fragment implements LocationListener {
 	private EditText addDialogDescriptionEditText;
 	private Button addDialogOkButton;
 	private Button addDialogCancelButton;
-	private List<Address> addresses;
 	private ArrayList<FoodItem> foodList;
 	private Bitmap imageBitmap;
 	private ServiceHandler mServiceHandler;
