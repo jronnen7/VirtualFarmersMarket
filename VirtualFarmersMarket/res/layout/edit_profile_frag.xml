@@ -34,6 +34,10 @@
 			android:layout_weight="1"
 			android:layout_height="wrap_content"
 			android:hint="First Name"
+			android:layout_marginRight="2sp"
+			android:background="@drawable/edittext_background"
+		    android:textColor="@color/text_color_selector"
+		    android:textCursorDrawable="@null"
 			android:textAppearance="?android:attr/textAppearanceMedium" 
 		/>
 		<EditText
@@ -42,6 +46,10 @@
 			android:layout_weight="1"
 			android:layout_height="wrap_content"
 			android:hint="Last Name"
+			android:layout_marginLeft="2sp"
+			android:background="@drawable/edittext_background"
+		    android:textColor="@color/text_color_selector"
+		    android:textCursorDrawable="@null"
 			android:textAppearance="?android:attr/textAppearanceMedium" 
 		/>
 	</LinearLayout>
@@ -52,6 +60,9 @@
 		android:layout_height="wrap_content"
 		android:hint="Email"
 		android:inputType="textEmailAddress"
+		android:background="@drawable/edittext_background"
+	    android:textColor="@color/text_color_selector"
+	    android:textCursorDrawable="@null"
 		android:textAppearance="?android:attr/textAppearanceMedium" 
 	/>
 	

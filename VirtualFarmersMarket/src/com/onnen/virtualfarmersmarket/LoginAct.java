@@ -1,16 +1,29 @@
 package com.onnen.virtualfarmersmarket;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.onnen.virtualfarmersmarket.utils.AppUtils;
+import com.onnen.virtualfarmersmarket.utils.SecurePassword;
+import com.onnen.virtualfarmersmarket.utils.ServiceHandler;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -21,7 +34,6 @@ import android.widget.Toast;
 public class LoginAct extends Activity implements OnClickListener {
 
 	private SharedPreferences sharedPrefs;
-	private Editor editor;
 	private String userName;
 	private String password;
 	
@@ -32,11 +44,24 @@ public class LoginAct extends Activity implements OnClickListener {
 	private TextView createAnAccount;
 	private boolean canExit;
 	
+	private ServiceHandler mServiceHandler;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Intent i = getIntent();
+		String emailStr = i.getStringExtra("email");
+		
+		mServiceHandler = new ServiceHandler();
+		
 		setContentView(R.layout.login_act);
 		InitViews();
+		
+		if(emailStr!=null) {
+			userNameEditText.setText(emailStr);
+			passwordEditText.requestFocus();
+		}
 		
 		sharedPrefs = getSharedPreferences(AppUtils.APP_PREFERENCES, Context.MODE_PRIVATE);	
 	}
@@ -57,42 +82,96 @@ public class LoginAct extends Activity implements OnClickListener {
 	
 	@Override
 	public void onClick(View v) {
+		Intent i;
 		if(v.getId() == loginButton.getId()) {
 			userName = userNameEditText.getText().toString();
 			password = passwordEditText.getText().toString();
 			SendServerUserNameAndPassword();
-	//		editor = sharedPrefs.edit();
-	//		editor.putString("userName", "value");
-	//		editor.putString("password", "value");		
-	//		editor.commit();	
+			
+			
 		} else if(v.getId() == forgotPassword.getId()) {
-			startActivity(new Intent(LoginAct.this, ForgotPasswordAct.class));
+			i = new Intent(LoginAct.this, ForgotPasswordAct.class);
+			AddEmail(i);
+			startActivity(i);
 			
 		} else if(v.getId() == createAnAccount.getId()) {
-			startActivity(new Intent(LoginAct.this, CreateAccountAct.class));
+			i = new Intent(LoginAct.this, CreateAccountAct.class);
+			AddEmail(i);
+			startActivity(i);
 		}
 	}
 	
+	private void AddEmail(Intent i) {
+		if(userNameEditText.getText().toString() != null) {
+			boolean isValidEmail = android.util.Patterns.EMAIL_ADDRESS.matcher(userNameEditText.getText().toString()).matches();
+			if(isValidEmail) {
+				i.putExtra("email", userNameEditText.getText().toString());
+			}
+		}
+	}
+
 	private void SendServerUserNameAndPassword() {
-		/* TODO */			
-		// for now lets just start the main activity
-		startActivity(new Intent(LoginAct.this, MainActivity.class));
+		List<Pair<String,String>> parametersList=new ArrayList<Pair<String,String>>();
+		parametersList.add(new Pair<String,String>("vfmReqId", AppUtils.LOGIN_REQ_ID));
+		parametersList.add(new Pair<String,String>("vfmApiKey", AppUtils.APP_API_KEY));
+		parametersList.add(new Pair<String,String>("vfmEmail", userNameEditText.getText().toString()));
+
+		new LoginTask().execute(parametersList);
 	}
 	
-	@Override
-	public void onBackPressed() {
-		 if(canExit) {
-			 	canExit = false;
-			 	moveTaskToBack(true);
-			}else  {
-				Toast.makeText(this,"Press back again to exit.", Toast.LENGTH_LONG).show();
-				canExit = true;
-				Timer timer = new Timer();
-				timer.schedule(new TimerTask() {
-				   public void run() {
-					   canExit = false;
-				   }
-				}, 5000);
+	private class LoginTask extends AsyncTask<List<Pair<String,String>>, Void, String> {
+		private List<Pair<String,String>> parameters;
+		private ProgressDialog pd;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pd = new ProgressDialog(LoginAct.this);
+			pd.setTitle("Please wait...");
+
+			pd.show();
+
+		}
+		@Override
+		protected String doInBackground(List<Pair<String,String>>... params) {
+			parameters = params[0];
+			return mServiceHandler.makeServiceCall(AppUtils.serverUrl, ServiceHandler.GET,
+					parameters);
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			pd.dismiss();
+			if (result != null) {
+				Log.e("result", result);
+				JSONObject rootObject;
+				try {
+					rootObject = new JSONObject(result);
+					if(rootObject.getString("vfmData").equalsIgnoreCase("true")) {
+						String dbHash = rootObject.getString("vfmKeyValue");
+						if(dbHash.equalsIgnoreCase("null")) {
+							Toast.makeText(LoginAct.this, "Incorrect Password", Toast.LENGTH_LONG).show();
+						}
+						else {
+							SecurePassword pwdEncrypter = SecurePassword.getInstance();
+							String dbPassword = pwdEncrypter.DecryptPassword(dbHash);
+							if(dbPassword.contentEquals(passwordEditText.getText())) {
+								startActivity(new Intent(LoginAct.this, MainActivity.class));
+							} else {
+								Toast.makeText(LoginAct.this, "Incorrect Password", Toast.LENGTH_LONG).show();
+							}
+						}
+					}
+					
+				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+					/*TODO*/
+					startActivity(new Intent(LoginAct.this, MainActivity.class));
+				}
 			}
+
+		}
 	}
 }

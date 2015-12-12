@@ -7,10 +7,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.onnen.virtualfarmersmarket.utils.AppUtils;
+import com.onnen.virtualfarmersmarket.utils.SecurePassword;
 import com.onnen.virtualfarmersmarket.utils.ServiceHandler;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +27,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CreateAccountAct extends Activity {
 
@@ -39,11 +46,20 @@ public class CreateAccountAct extends Activity {
 	private ServiceHandler mServiceHandler;
 	private Dialog d;
 
+	
+	private String hashedPassword;
+	private SharedPreferences sharedPrefs;
+	private Editor editor;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Intent i = getIntent();
+		String emailStr = i.getStringExtra("email");
 		setContentView(R.layout.create_account_act);
 		InitViews();
+		email.setText(emailStr);
+		sharedPrefs = getSharedPreferences(AppUtils.APP_PREFERENCES, Context.MODE_PRIVATE);	
 	}
 
 	private void InitViews() {
@@ -143,17 +159,37 @@ public class CreateAccountAct extends Activity {
 
 
 	private void PostInfoToServer() {
+		SecurePassword pwdEncrypter = SecurePassword.getInstance();
+		try {
+			hashedPassword = pwdEncrypter.EncryptPassword(password.getText().toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+				
 		List<Pair<String,String>> parametersList=new ArrayList<Pair<String,String>>();
 		parametersList.add(new Pair<String,String>("vfmReqId", AppUtils.CREATE_ACCOUNT_REQ_ID));
+		parametersList.add(new Pair<String,String>("vfmApiKey", AppUtils.APP_API_KEY));
+		
+		parametersList.add(new Pair<String,String>("vfmUserName", lastName.getText().toString() + ":" + firstName.getText().toString()));
+		parametersList.add(new Pair<String,String>("vfmEmail", email.getText().toString()));
+		parametersList.add(new Pair<String,String>("vfmPassword", hashedPassword));
+
 		new CreateAccountUploader().execute(parametersList);
 	}
 	
 	
 	private class CreateAccountUploader extends AsyncTask<List<Pair<String,String>>, Void, String> {
 		private List<Pair<String,String>> parameters;
+		private ProgressDialog pd;
+		private Dialog d;
+		
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			pd = new ProgressDialog(CreateAccountAct.this);
+			pd.setTitle("Creating your Account");
+			pd.setMessage("Please wait...");
+			pd.show();
 		}
 		@Override
 		protected String doInBackground(List<Pair<String,String>>... params) {
@@ -162,6 +198,11 @@ public class CreateAccountAct extends Activity {
 					parameters);
 		}
 
+		/*
+		 * INSERT INTO accounts (userid,name,email,password, joindate) 
+		 * VALUES('56667164b0526','Onnen,Jared','jared@goozmo.com','phWd4yLhdyAE8L6iQj9Jyw==', '12/08/15 0:57.56')
+		 * */
+		
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
@@ -170,11 +211,56 @@ public class CreateAccountAct extends Activity {
 				JSONObject rootObject;
 				try {
 					rootObject = new JSONObject(result);
-//					ArrayList<HashMap<String,String>> data = AppUtils.GetData(rootObject);
-					
+					if(rootObject.getString("vfmData").equalsIgnoreCase("true")) {
+	
+						String userId=rootObject.getString("vfmUserId");		
+						if(!userId.equalsIgnoreCase("-1")) {
+							
+							editor = sharedPrefs.edit();
+							editor.putString("userId", userId);
+							editor.putString("password", hashedPassword);
+							editor.putString("firstName", firstName.getText().toString());
+							editor.putString("lastName", lastName.getText().toString());
+							
+							editor.commit();	
+							
+							
+							startActivity(new Intent(CreateAccountAct.this, MainActivity.class));
+						} else {
+							Toast.makeText(CreateAccountAct.this, "Account Already found.", Toast.LENGTH_LONG).show();
+							
+					       	d = new Dialog(CreateAccountAct.this); // create dialog
+							d.setContentView(R.layout.create_account_dialog); // set background
+							
+							Button loginButton = (Button) d.findViewById(R.id.create_account_dialog_login_button);
+							Button forgotPassword = (Button) d.findViewById(R.id.create_account_dialog_forgot_password);
+							
+							loginButton.setOnClickListener(new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									Intent i = new Intent(CreateAccountAct.this, LoginAct.class);
+									i.putExtra("email", email.getText().toString());
+									startActivity(i);
+									d.dismiss();
+								}
+							});
+							forgotPassword.setOnClickListener(new OnClickListener() {
+								@Override
+								public void onClick(View v) {
+									Intent i = new Intent(CreateAccountAct.this, ForgotPasswordAct.class);
+									i.putExtra("email", email.getText().toString());
+									startActivity(i);
+									d.dismiss();
+								}
+							});
+							d.show();
+						}
+					}
+
+					pd.dismiss();
 				} catch (JSONException e) {
 					e.printStackTrace();
-
+					pd.dismiss();
 				}
 			}
 		}

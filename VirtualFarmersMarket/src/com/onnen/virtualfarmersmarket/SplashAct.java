@@ -18,6 +18,12 @@ public class SplashAct extends Activity {
 	private String userName;
 	private String password;
 	
+	@Override 
+	protected void onResume() {
+		super.onResume();
+//		StartLoginAct();
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

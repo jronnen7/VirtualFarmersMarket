@@ -30,7 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener {
 
 	/**
 	 * Fragment managing the behaviors, interactions and presentation of the
@@ -43,7 +43,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
-
+	private CacheingEngine cache;
+	private LocationManager m_lm;
 	private FragMenuTracker menu;
 	
 	private MainListFrag mainListView;
@@ -59,6 +60,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		m_lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		m_lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+		m_lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+		cache = CacheingEngine.getInstance();
 
 		mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.navigation_drawer);
@@ -157,6 +163,34 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     	   mainListView.onActivityResult(requestCode, resultCode, data);
        }
     }
+
+	@Override
+	public void onLocationChanged(Location location) {
+		Double latitude = location.getLatitude();
+		Double longitude = location.getLongitude();
+		cache.Add("latitude", latitude);
+		cache.Add("longitude", longitude);
+		
+		m_lm.removeUpdates(this);
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	
 	@Override

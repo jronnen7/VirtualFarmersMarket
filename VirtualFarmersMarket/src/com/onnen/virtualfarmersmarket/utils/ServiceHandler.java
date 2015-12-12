@@ -37,49 +37,38 @@ public class ServiceHandler {
     public String makeServiceCall(String targetUrl, int method,
             List<Pair<String,String>> params) {
     		String ret = new String();
-    		
-            // http client
-        	if(method == POST) {
-        		if(params != null) {
-		        	/*TODO*/
-        		}
- 
-            } else if (method == GET) {
-        		if(params != null) {
-		        	URL url;
-		        	HttpURLConnection httpCon;
-					try {
-						url = new URL(targetUrl + BuildUrlOptions(params));
-						httpCon = (HttpURLConnection) url.openConnection();
-						httpCon.setUseCaches(false);
-			        	httpCon.setAllowUserInteraction(false);
+    		if(params != null) {
+	        	URL url;
+	        	HttpURLConnection httpCon;
+				try {
+					url = new URL(targetUrl + BuildUrlOptions(params));
+					httpCon = (HttpURLConnection) url.openConnection();
+					httpCon.setUseCaches(false);
+		        	httpCon.setAllowUserInteraction(false);
 
-			        	//OutputStreamWriter os = new OutputStreamWriter(httpCon.getOutputStream());
-			        	//if(os != null) {
-			        	//	os.flush();
-			        	//	os.write(str);
-			        	//}
-			        
-			        	BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
-			            StringBuilder sb = new StringBuilder();
-			            String line = null;
-			            
-			            while((line = reader.readLine()) != null) {
-			                       sb.append(line + "\n");
-			            }
-			            ret = sb.toString();
-					} catch (MalformedURLException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-		        	
+		        	if(method == POST) {
+		        		httpCon.setRequestMethod("POST");
+		            } else if (method == GET) {
+		            	httpCon.setRequestMethod("GET");
+		            }
+		        
+		        	BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
+		            StringBuilder sb = new StringBuilder();
+		            String line = null;
+		            
+		            while((line = reader.readLine()) != null) {
+		                       sb.append(line + "\n");
+		            }
+		            ret = sb.toString();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+    	
 
-        		}
-            }
-            
-        
-    
+    		}
+
 			return ret;
     }
 }

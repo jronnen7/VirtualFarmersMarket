@@ -13,7 +13,12 @@ public class AppUtils {
 	public static final String DOWNLOAD_LIST_REQ_ID = "304";
 	public static final String serverUrl = "http://vfm.lsp.goozmo.com/";
 	public static final String APP_PREFERENCES = "AppPrefs";
+	public static final String APP_API_KEY = "TFR5f6GTY162DFHD2332GSQU72OOTF";
 	public static final String CREATE_ACCOUNT_REQ_ID = "102";
+	public static final String LOGIN_REQ_ID = "101";
+	public static final String RESET_PASSWORD_REQ_ID = "100";
+	public static final String GET_PROFILE_INFO_REQ_ID = "200";
+	public static final String SAVE_PROFILE_INFO_REQ_ID = "201";
 	
 	
 	public static ArrayList<HashMap<String, String>> GetData(JSONObject rootObject) throws JSONException {
@@ -72,7 +77,8 @@ public class AppUtils {
 		return BuildImageUrlFromEntryId(String.valueOf(entryId));
 	}
 
-	public static String BuildImageUrlFromEntryId (String entryId) {
+	public static String BuildImageUrlFromEntryId(String entryId) {
 		return new String(serverUrl + "images/" + entryId + ".jpg");
 	}
+
 }
