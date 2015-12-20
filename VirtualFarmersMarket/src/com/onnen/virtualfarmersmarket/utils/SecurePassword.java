@@ -22,7 +22,7 @@ public class SecurePassword {
 		KeyGenerator kgen = KeyGenerator.getInstance("AES");
 		SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
 		sr.setSeed(keyStart);
-		kgen.init(256, sr); // 192 and 256 bits may not be available
+		kgen.init(128, sr); // 192 and 256 bits may not be available
 		SecretKey skey = kgen.generateKey();
 		key = skey.getEncoded();  
 	}
@@ -39,7 +39,7 @@ public class SecurePassword {
 	
 	public String EncryptPassword(String password) throws Exception {
 		byte[] hash =  Encrypt(key,password.getBytes());
-		return Base64.encodeToString(hash, Base64.URL_SAFE);
+		return AppUtils.ByteStreamToString(hash);
 	}
 	
 /*	public String EncryptPassword(String clearText) {
@@ -57,7 +57,7 @@ public class SecurePassword {
 	}*/
 	
 	public String DecryptPassword(String hash) throws Exception {
-		byte[] tmp = Base64.decode(hash, Base64.URL_SAFE);
+		byte[] tmp = AppUtils.StringToByteStream(hash);
 		return new String(Decrypt(key,tmp), "utf-8");
 	}
 /*	public String DecryptPassword(String hash) {
@@ -74,18 +74,51 @@ public class SecurePassword {
 	    }
 	} */
 	
+	
+	
 	private byte[] Encrypt(byte[] raw, byte[] clear) throws Exception {
-	    SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-	    Cipher cipher = Cipher.getInstance("AES");
+	    SecretKeySpec skeySpec = new SecretKeySpec(raw, "PKCS7Padding");
+	    Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding", "BC");
 	    cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
 	    byte[] encrypted = cipher.doFinal(clear);
 	    return encrypted;
 	}
 	private byte[] Decrypt(byte[] raw, byte[] encrypted) throws Exception {
-	    SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-	    Cipher cipher = Cipher.getInstance("AES");
+	    SecretKeySpec skeySpec = new SecretKeySpec(raw, "PKCS7Padding");
+	    Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding", "BC");
 	    cipher.init(Cipher.DECRYPT_MODE, skeySpec);
 	    byte[] decrypted = cipher.doFinal(encrypted);
 	    return decrypted;
 	}
+	
+	/* maybe try this next
+	 * 
+	 * 
+	 * 
+	 * 
+	 * public class AeSimpleSHA1 {
+    private static String convertToHex(byte[] data) {
+        StringBuilder buf = new StringBuilder();
+        for (byte b : data) {
+            int halfbyte = (b >>> 4) & 0x0F;
+            int two_halfs = 0;
+            do {
+                buf.append((0 <= halfbyte) && (halfbyte <= 9) ? (char) ('0' + halfbyte) : (char) ('a' + (halfbyte - 10)));
+                halfbyte = b & 0x0F;
+            } while (two_halfs++ < 1);
+        }
+        return buf.toString();
+    }
+
+    public static String SHA1(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        md.update(text.getBytes("iso-8859-1"), 0, text.length());
+        byte[] sha1hash = md.digest();
+        return convertToHex(sha1hash);
+    }
+}
+	 * 
+	 * 
+	 * 
+	 * */
 }

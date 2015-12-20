@@ -165,9 +165,9 @@ public class LoginAct extends Activity implements OnClickListener {
 					
 				} catch (JSONException e) {
 					e.printStackTrace();
+					startActivity(new Intent(LoginAct.this, MainActivity.class));
 				} catch (Exception e) {
 					e.printStackTrace();
-					/*TODO*/
 					startActivity(new Intent(LoginAct.this, MainActivity.class));
 				}
 			}

@@ -81,4 +81,38 @@ public class AppUtils {
 		return new String(serverUrl + "images/" + entryId + ".jpg");
 	}
 
+	public static String ByteStreamToString(byte[] hash) {
+		String ret = new String("");
+		for(int i=0;i<hash.length;i++) {
+			String tmp = Byte.toString(hash[i]);
+			ret+=tmp;
+			if(i+1<hash.length) {
+				ret+=":";
+			}
+		}
+		return ret;
+	}
+
+	public static byte[] StringToByteStream(String hash) {
+		String[] byteStings = hash.split(":");
+		byte[] ret = new byte[byteStings.length];
+		for(int i=0; i<byteStings.length;i++) {
+			ret[i] = AppUtils.ValueOf(byteStings[i]);
+		}
+		return ret;
+	}
+
+	private static byte ValueOf(String string) {
+		return Byte.valueOf(string);
+	}
+
+/*	private static int CountNumberOfBytes(String semicolinString) {
+		int ret = 0;
+		char chars[] = semicolinString.toCharArray();
+		for(int i=0;i<chars.length;i++) {
+			if(chars[i] == ':') { ret++; }
+		}
+		return ret;
+	}*/
+
 }
