@@ -10,10 +10,12 @@ import java.util.TimerTask;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.onnen.virtualfarmersmarket.utils.AppUtils;
 import com.onnen.virtualfarmersmarket.utils.CacheingEngine;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,6 +44,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 	 * Used to store the last screen title. For use in
 	 * {@link #restoreActionBar()}.
 	 */
+	private SharedPreferences sharedPrefs;
+	private SharedPreferences.Editor editor;	
 	private CharSequence mTitle;
 	private CacheingEngine cache;
 	private LocationManager m_lm;
@@ -72,6 +76,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+		
+		sharedPrefs = getSharedPreferences(AppUtils.APP_PREFERENCES, Context.MODE_PRIVATE);	
 	}
 
 	@Override
@@ -146,6 +152,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_logout) {
+			editor = sharedPrefs.edit();
+			editor.clear();
+			editor.commit();
 			LogOut();
 		}
 		return super.onOptionsItemSelected(item);

@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.onnen.virtualfarmersmarket.utils.AppUtils;
+import com.onnen.virtualfarmersmarket.utils.HttpPost;
 import com.onnen.virtualfarmersmarket.utils.SecurePassword;
 import com.onnen.virtualfarmersmarket.utils.ServiceHandler;
 
@@ -159,12 +160,9 @@ public class CreateAccountAct extends Activity {
 
 
 	private void PostInfoToServer() {
-		SecurePassword pwdEncrypter = SecurePassword.getInstance();
-		try {
-			hashedPassword = pwdEncrypter.EncryptPassword(password.getText().toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		SecurePassword sp = SecurePassword.getInstance();
+		hashedPassword = sp.Hash(password.getText().toString());
+
 				
 		List<Pair<String,String>> parametersList=new ArrayList<Pair<String,String>>();
 		parametersList.add(new Pair<String,String>("vfmReqId", AppUtils.CREATE_ACCOUNT_REQ_ID));
@@ -174,38 +172,13 @@ public class CreateAccountAct extends Activity {
 		parametersList.add(new Pair<String,String>("vfmEmail", email.getText().toString()));
 		parametersList.add(new Pair<String,String>("vfmPassword", hashedPassword));
 
-		new CreateAccountUploader().execute(parametersList);
+		new HttpPost(this, new CreateAccountHandler()).execute(parametersList);
 	}
 	
-	
-	private class CreateAccountUploader extends AsyncTask<List<Pair<String,String>>, Void, String> {
-		private List<Pair<String,String>> parameters;
-		private ProgressDialog pd;
-		private Dialog d;
-		
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			pd = new ProgressDialog(CreateAccountAct.this);
-			pd.setTitle("Creating your Account");
-			pd.setMessage("Please wait...");
-			pd.show();
-		}
-		@Override
-		protected String doInBackground(List<Pair<String,String>>... params) {
-			parameters = params[0];
-			return mServiceHandler.makeServiceCall(AppUtils.serverUrl, ServiceHandler.POST,
-					parameters);
-		}
+	private class CreateAccountHandler implements IResultHandler {
 
-		/*
-		 * INSERT INTO accounts (userid,name,email,password, joindate) 
-		 * VALUES('56667164b0526','Onnen,Jared','jared@goozmo.com','phWd4yLhdyAE8L6iQj9Jyw==', '12/08/15 0:57.56')
-		 * */
-		
 		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
+		public int onResult(String result) {
 			if (result != null) {
 				Log.e("result", result);
 				JSONObject rootObject;
@@ -218,7 +191,8 @@ public class CreateAccountAct extends Activity {
 							
 							editor = sharedPrefs.edit();
 							editor.putString("userId", userId);
-							editor.putString("password", hashedPassword);
+							editor.putString("userEmail", email.getText().toString());
+							editor.putString("password", password.getText().toString());
 							editor.putString("firstName", firstName.getText().toString());
 							editor.putString("lastName", lastName.getText().toString());
 							
@@ -257,13 +231,18 @@ public class CreateAccountAct extends Activity {
 						}
 					}
 
-					pd.dismiss();
 				} catch (JSONException e) {
 					e.printStackTrace();
-					pd.dismiss();
 				}
 			}
+			return 0;
 		}
+
+		@Override
+		public void onError(int resultError) {   
+			
+		}
+		
 	}
 
 }

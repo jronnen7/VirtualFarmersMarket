@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import com.onnen.virtualfarmersmarket.utils.AppUtils;
 import com.onnen.virtualfarmersmarket.utils.CacheingEngine;
+import com.onnen.virtualfarmersmarket.utils.HttpGet;
 import com.onnen.virtualfarmersmarket.utils.LatLongToAddress;
 import com.onnen.virtualfarmersmarket.utils.ServiceHandler;
 
@@ -117,7 +118,8 @@ public class MainListFrag extends Fragment implements LocationListener {
 		List<Pair<String,String>> parametersList=new ArrayList<Pair<String,String>>();
 		parametersList.add(new Pair<String,String>("vfmReqId", AppUtils.DOWNLOAD_LIST_REQ_ID));
 		parametersList.add(new Pair<String,String>("vfmCurrentLoc", "23,-123.123122"));
-		new DownloadListTask().execute(parametersList);
+		
+		new HttpGet(new DownloadListHandler()).execute(parametersList);
 	}
 
 	@Override
@@ -332,30 +334,10 @@ public class MainListFrag extends Fragment implements LocationListener {
 			listAdapter.notifyDataSetChanged();
 		}
 	}
-	
-	
 
-	private class DownloadListTask extends AsyncTask<List<Pair<String,String>>, Void, String> {
-		private List<Pair<String,String>> parameters;
+	private class DownloadListHandler implements IResultHandler {
 		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-
-			/*pDialog = new ProgressDialog(getActivity());
-			pDialog.setMessage("Please wait...");
-			pDialog.setCancelable(false);
-			pDialog.show();*/
-		}
-		@Override
-		protected String doInBackground(List<Pair<String,String>>... params) {
-			parameters = params[0];
-			return mServiceHandler.makeServiceCall(AppUtils.serverUrl, ServiceHandler.GET,
-					parameters);
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
+		public int onResult(String result) {
 			if (result != null) {
 				Log.e("result", result);
 				JSONObject rootObject;
@@ -368,13 +350,17 @@ public class MainListFrag extends Fragment implements LocationListener {
 					NotifyView();
 				} catch (JSONException e) {
 					e.printStackTrace();
-
+	
 				}
 			}
-
+			return 0;
 		}
-	}
-	
+
+		@Override
+		public void onError(int resultError) {
+			
+		}
+	}	
 	
 	private void DownloadImagesAsyc(ArrayList<HashMap<String, String>> data) {
 		for(int i=0;i<data.size() ;i++) {

@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.onnen.virtualfarmersmarket.utils.AppUtils;
+import com.onnen.virtualfarmersmarket.utils.HttpPost;
 import com.onnen.virtualfarmersmarket.utils.ServiceHandler;
 
 import android.app.Activity;
@@ -68,28 +69,16 @@ public class ForgotPasswordAct extends Activity implements OnClickListener {
 				List<Pair<String,String>> parametersList=new ArrayList<Pair<String,String>>();
 				parametersList.add(new Pair<String,String>("vfmReqId", AppUtils.RESET_PASSWORD_REQ_ID));
 				parametersList.add(new Pair<String,String>("vfmUserEmail", email.getText().toString()));
-				new ResetPasswordTask().execute(parametersList);
+
+				new HttpPost(new ResetPasswordHandler()).execute(parametersList);
 			}
 		}
 		
 	}
 	
-	private class ResetPasswordTask extends AsyncTask<List<Pair<String,String>>, Void, String> {
-		private List<Pair<String,String>> parameters;
+	private class ResetPasswordHandler implements IResultHandler{
 		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-		}
-		@Override
-		protected String doInBackground(List<Pair<String,String>>... params) {
-			parameters = params[0];
-			return mServer.makeServiceCall(AppUtils.serverUrl, ServiceHandler.POST,
-					parameters);
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
+		public int onResult(String result) {
 			if (result != null) {
 				Log.e("result", result);
 				JSONObject rootObject;
@@ -117,6 +106,14 @@ public class ForgotPasswordAct extends Activity implements OnClickListener {
 					e.printStackTrace();
 				}
 			}
+			return 0;
 		}
+
+		@Override
+		public void onError(int resultError) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 }

@@ -10,6 +10,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.onnen.virtualfarmersmarket.utils.AppUtils;
+import com.onnen.virtualfarmersmarket.utils.HttpGet;
+import com.onnen.virtualfarmersmarket.utils.HttpPost;
+import com.onnen.virtualfarmersmarket.utils.MyResult;
 import com.onnen.virtualfarmersmarket.utils.SecurePassword;
 import com.onnen.virtualfarmersmarket.utils.ServiceHandler;
 
@@ -34,6 +37,7 @@ import android.widget.Toast;
 public class LoginAct extends Activity implements OnClickListener {
 
 	private SharedPreferences sharedPrefs;
+	private SharedPreferences.Editor editor;
 	private String userName;
 	private String password;
 	
@@ -86,7 +90,7 @@ public class LoginAct extends Activity implements OnClickListener {
 		if(v.getId() == loginButton.getId()) {
 			userName = userNameEditText.getText().toString();
 			password = passwordEditText.getText().toString();
-			SendServerUserNameAndPassword();
+			SendServerUserName();
 			
 			
 		} else if(v.getId() == forgotPassword.getId()) {
@@ -110,38 +114,19 @@ public class LoginAct extends Activity implements OnClickListener {
 		}
 	}
 
-	private void SendServerUserNameAndPassword() {
+	private void SendServerUserName() {
 		List<Pair<String,String>> parametersList=new ArrayList<Pair<String,String>>();
 		parametersList.add(new Pair<String,String>("vfmReqId", AppUtils.LOGIN_REQ_ID));
 		parametersList.add(new Pair<String,String>("vfmApiKey", AppUtils.APP_API_KEY));
 		parametersList.add(new Pair<String,String>("vfmEmail", userNameEditText.getText().toString()));
 
-		new LoginTask().execute(parametersList);
+		new HttpPost(this,new LoginHandler()).execute(parametersList);
 	}
 	
-	private class LoginTask extends AsyncTask<List<Pair<String,String>>, Void, String> {
-		private List<Pair<String,String>> parameters;
-		private ProgressDialog pd;
+	private class LoginHandler implements IResultHandler {
 		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			pd = new ProgressDialog(LoginAct.this);
-			pd.setTitle("Please wait...");
-
-			pd.show();
-
-		}
-		@Override
-		protected String doInBackground(List<Pair<String,String>>... params) {
-			parameters = params[0];
-			return mServiceHandler.makeServiceCall(AppUtils.serverUrl, ServiceHandler.GET,
-					parameters);
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			pd.dismiss();
+		public int onResult(String result) {
+			int ret = MyResult.RESULT_OK;
 			if (result != null) {
 				Log.e("result", result);
 				JSONObject rootObject;
@@ -153,10 +138,14 @@ public class LoginAct extends Activity implements OnClickListener {
 							Toast.makeText(LoginAct.this, "Incorrect Password", Toast.LENGTH_LONG).show();
 						}
 						else {
-							SecurePassword pwdEncrypter = SecurePassword.getInstance();
-							String dbPassword = pwdEncrypter.DecryptPassword(dbHash);
-							if(dbPassword.contentEquals(passwordEditText.getText())) {
+							SecurePassword sp = SecurePassword.getInstance();
+							if(sp.Matches(passwordEditText.getText().toString(), dbHash)) {
 								startActivity(new Intent(LoginAct.this, MainActivity.class));
+								
+								editor = sharedPrefs.edit();
+								editor.putString("userEmail", userNameEditText.getText().toString());
+								editor.putString("password", passwordEditText.getText().toString());
+								editor.commit();
 							} else {
 								Toast.makeText(LoginAct.this, "Incorrect Password", Toast.LENGTH_LONG).show();
 							}
@@ -165,12 +154,19 @@ public class LoginAct extends Activity implements OnClickListener {
 					
 				} catch (JSONException e) {
 					e.printStackTrace();
-					startActivity(new Intent(LoginAct.this, MainActivity.class));
+					ret = MyResult.ERROR;
+					Toast.makeText(LoginAct.this, "Incorrect Password", Toast.LENGTH_LONG).show();
 				} catch (Exception e) {
 					e.printStackTrace();
-					startActivity(new Intent(LoginAct.this, MainActivity.class));
+					ret = MyResult.ERROR;
+					Toast.makeText(LoginAct.this, "Incorrect Password", Toast.LENGTH_LONG).show();
 				}
 			}
+			return ret;
+		}
+
+		@Override
+		public void onError(int resultError) {
 
 		}
 	}
