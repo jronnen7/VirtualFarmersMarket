@@ -1,12 +1,17 @@
 package com.onnen.virtualfarmersmarket;
 
 import android.support.v7.app.ActionBarActivity;
+
+import com.onnen.virtualfarmersmarket.utils.AppUtils;
+
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -16,9 +21,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -59,6 +66,8 @@ public class NavigationDrawerFragment extends Fragment {
 	private int mCurrentSelectedPosition = 0;
 	private boolean mFromSavedInstanceState;
 	private boolean mUserLearnedDrawer;
+	private SharedPreferences sharedPrefs;
+	private SharedPreferences.Editor editor;
 
 	public NavigationDrawerFragment() {
 	}
@@ -67,9 +76,7 @@ public class NavigationDrawerFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Read in the flag indicating whether or not the user has demonstrated
-		// awareness of the
-		// drawer. See PREF_USER_LEARNED_DRAWER for details.
+		sharedPrefs = getActivity().getSharedPreferences(AppUtils.APP_PREFERENCES, Context.MODE_PRIVATE);
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
@@ -78,7 +85,6 @@ public class NavigationDrawerFragment extends Fragment {
 			mFromSavedInstanceState = true;
 		}
 
-		// Select either the default item (0) or the last selected item.
 		selectItem(mCurrentSelectedPosition);
 	}
 
@@ -90,9 +96,13 @@ public class NavigationDrawerFragment extends Fragment {
 		setHasOptionsMenu(true);
 	}
 
+	
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		mDrawerListView = (ListView) inflater.inflate(R.layout.navigation_drawer_frag, container, false);
+		View rootView = null;
+		rootView = inflater.inflate(R.layout.navigation_drawer_frag, container, false);
+		mDrawerListView = (ListView) rootView.findViewById(R.id.navigation_drawer_list);
 		mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -101,11 +111,33 @@ public class NavigationDrawerFragment extends Fragment {
 		});
 		mDrawerListView.setAdapter(
 				new ArrayAdapter<String>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_1,
-						android.R.id.text1, new String[] { getString(R.string.title_section1),
-								getString(R.string.title_section2), getString(R.string.title_section3),getString(R.string.title_section4) }));
+						android.R.id.text1, 
+							new String[] { 
+								getString(R.string.title_section1),
+								getString(R.string.title_section2), 
+								getString(R.string.title_section3),
+								getString(R.string.title_section4),
+								getString(R.string.title_section5) }));
 		mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+		
+		
+		Button signOut = (Button) rootView.findViewById(R.id.navigation_drawer_signout_button);
+		signOut.setOnClickListener( new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				LogOut();
+			}
+		});
 
-		return mDrawerListView;
+		return rootView;
+	}
+	
+    private void LogOut() {
+		editor = sharedPrefs.edit();
+		editor.clear();
+		editor.commit();
+		Intent i = new Intent(getActivity(),SplashAct.class);
+		startActivity(i);
 	}
 
 	public boolean isDrawerOpen() {
@@ -132,7 +164,7 @@ public class NavigationDrawerFragment extends Fragment {
 
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		
+		actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
 		actionBar.setHomeButtonEnabled(true);
 
 		// ActionBarDrawerToggle ties together the the proper interactions
@@ -252,7 +284,7 @@ public class NavigationDrawerFragment extends Fragment {
 		// showGlobalContextActionBar, which controls the top-left area of the
 		// action bar.
 		if (mDrawerLayout != null && isDrawerOpen()) {
-			inflater.inflate(R.menu.global, menu);
+//			inflater.inflate(R.menu.global, menu);
 			showGlobalContextActionBar();
 		}
 		super.onCreateOptionsMenu(menu, inflater);

@@ -5,7 +5,8 @@
     <string name="title_section1">List View</string>
     <string name="title_section2">Map View</string>
     <string name="title_section3">My Profile</string>
-    <string name="title_section4">Become a Seller</string>
+    <string name="title_section4">Sell an Item</string>
+    <string name="title_section5">Become a Seller</string>
     
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

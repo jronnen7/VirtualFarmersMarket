@@ -13,75 +13,59 @@ import com.onnen.virtualfarmersmarket.utils.AppUtils;
 import com.onnen.virtualfarmersmarket.utils.CacheingEngine;
 import com.onnen.virtualfarmersmarket.utils.HttpGet;
 import com.onnen.virtualfarmersmarket.utils.LatLongToAddress;
-import com.onnen.virtualfarmersmarket.utils.ServiceHandler;
-
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Address;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public class MainListFrag extends Fragment implements LocationListener {
+public class MainListFrag extends Fragment {
 
 	public ListView listView;
 	public FoodListAdapter listAdapter;
 	public FoodListItemListener listItemListener;
-	private ImageView image;
+	
 	private Double latitude;
 	private Double longitude;
-	protected LocationManager locationManager;
-	protected LocationListener locationListener;
 	protected LatLongToAddress locationConverter;
-	private Dialog addDialog;
-	private TextView addDialogLocationTextView;
-	private EditText addDialogPriceEditText;
-	private EditText addDialogPerUnitEditText;
-	private EditText addDialogNameEditText;
-	private EditText addDialogDescriptionEditText;
-	private Button addDialogOkButton;
-	private Button addDialogCancelButton;
+
 	private ArrayList<FoodItem> foodList;
-	private Bitmap imageBitmap;
-	private ServiceHandler mServiceHandler;
+	
 	private Context mContext;
 	private CacheingEngine cache;
 	private boolean isFirst = true;
 	private static MainListFrag singleton;
-	private MainListFrag(Context context) {
-		this.mContext = context;
+	private MainListFrag() {
 		foodList = new ArrayList<FoodItem>(10);
 		cache = CacheingEngine.getInstance();
-		mServiceHandler = new ServiceHandler();
+	}
+	private void SetContext(Context context) {
+		this.mContext = context;
+		locationConverter = null;
 		locationConverter = new LatLongToAddress(mContext);
 	}
-
+	
 	public static MainListFrag GetInstance(Context context) {
 		if(singleton == null) {
-			singleton = new MainListFrag(context);
-		}return singleton;
+			singleton = new MainListFrag();
+		} 
+		singleton.SetContext(context);
+		return singleton;
 	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.main_list_frag, container, false);
@@ -89,8 +73,6 @@ public class MainListFrag extends Fragment implements LocationListener {
 		 
 		if(isFirst) {
 			DownloadFarmerMarketList();
-			locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-	        RequestLocationUpdates(); 
 			isFirst = false;
 		} 
 		
@@ -100,13 +82,6 @@ public class MainListFrag extends Fragment implements LocationListener {
 	}
 
 	private void InitViews(View rootView) {
-		ImageButton camera = (ImageButton) rootView.findViewById(R.id.cameraButton);
-        camera.setOnClickListener(new OnClickListener() {
-        	@Override
-			public void onClick(View arg0) {
-        		TakePicture();
-			}
-        });
 		listView = (ListView) rootView.findViewById(R.id.foodList);	
 		listAdapter = new FoodListAdapter(mContext, R.layout.row_food_item_list, foodList);
 		listItemListener = new FoodListItemListener(mContext, listAdapter);
@@ -148,6 +123,9 @@ public class MainListFrag extends Fragment implements LocationListener {
                 LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.row_food_item_list, null);
             }
+            if(position % 2 == 1) {
+            	parent.setBackgroundColor(0xcccccc);
+            }
             FoodItem f = items.get(position);
             if(f != null) {
             	setView(f);
@@ -184,147 +162,6 @@ public class MainListFrag extends Fragment implements LocationListener {
 		}
 
 	} /* FoodListAdapter */
-	
-    private void TakePicture()
-	{
-	    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-	    Toast.makeText(mContext, "Take Picture to Add Item to List", Toast.LENGTH_LONG).show();
-	    // use this routine to have it call onActivityResult when it is finished with the pic
-	    startActivityForResult(intent, 0);
-	}
-    
-    // when activity is returened to from camera...
-    // this routine can get called several other ways so we need to ensure
-    // that the camera routine returned successfully before trying to capture the image
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-       if(addDialog!= null) {
-	       if(addDialog.isShowing()) {
-	    	   addDialog.dismiss();
-	    	   addDialog = null;
-	       }
-       }
-       // activity return successfully (user didn't hit back button to get back from camera)
-       if(data != null) { 
-    	    // make a listener for the location so when the user clicks it the location updates
-	       	// make a listener for the add dialog class
-	       	DismissAddDialogListener dialogListener = new DismissAddDialogListener();
-	       	addDialog = new Dialog(mContext); // create dialog
-			addDialog.setContentView(R.layout.add_dialog); // set background
-			addDialog.setCancelable(true); // click outside the box dismisses it
-			
-			// get GUI objects into scope
-			addDialogLocationTextView = (TextView) addDialog.findViewById(R.id.addDialogLocationTextView);
-			image = (ImageView) addDialog.findViewById(R.id.imageView1);
-			addDialogOkButton = (Button) addDialog.findViewById(R.id.addDialogOkButton);
-			addDialogCancelButton = (Button) addDialog.findViewById(R.id.addDialogCancelButton);
-			addDialogNameEditText = (EditText) addDialog.findViewById(R.id.addDialogNameEditText);
-			addDialogPriceEditText = (EditText) addDialog.findViewById(R.id.addDialogPriceEditText);
-			addDialogPerUnitEditText = (EditText) addDialog.findViewById(R.id.addDialogPerUnitEditText);
-			addDialogDescriptionEditText = (EditText) addDialog.findViewById(R.id.addDialogDescriptionEditText);
-			
-			// set listener
-			addDialogOkButton.setOnClickListener(dialogListener);
-			addDialogCancelButton.setOnClickListener(dialogListener);
-			
-			// show dialog
-			addDialog.show();
-			
-			// get image from camera activity
-			imageBitmap = (Bitmap) data.getExtras().get("data");
-			// set dialog image
-			image.setImageBitmap(imageBitmap);
-	       
-	        //Request Location Updates
-	        RequestLocationUpdates(); 
-       }
-    }
-
-    // location of the device is found.
-	@Override
-	public void onLocationChanged(android.location.Location arg0) {
-		// save location of the device
-		latitude = arg0.getLatitude();
-		longitude = arg0.getLongitude();
-		
-		locationManager.removeUpdates(this);
-		locationConverter.SetLocation(latitude, longitude);
-		
-		if(addDialog != null && addDialogLocationTextView != null) {
-			addDialogLocationTextView.setText(locationConverter.ToAddress());
-		}
-	}
-
-	@Override
-	public void onProviderDisabled(String arg0) {
-		// Don't really care if it was disabled after first update
-	}
-
-	@Override
-	public void onProviderEnabled(String arg0) {
-		//  Wait for the provider to find location no initilization/cleanup needed
-	}
-
-	@Override
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-		// doesn't matter because updates are shut off after first found location
-	}
-	
-	// responsible for actions performed when ok and cancel are pressed on the
-	// Add dialog window
-	private class DismissAddDialogListener implements OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			switch(v.getId()) {
-			case R.id.addDialogOkButton:
-				AddItem();
-			case R.id.addDialogCancelButton:
-				addDialog.dismiss();
-				addDialog = null;
-				break;
-			default:
-				addDialog.dismiss();
-				break;
-			}
-			
-		}
-
-		private void AddItem() {
-			String name = addDialogNameEditText.getText().toString();
-			String perUnit = addDialogPerUnitEditText.getText().toString();
-			String price = addDialogPriceEditText.getText().toString();
-
-			String l;
-			if(latitude != null && longitude != null) {
-				locationConverter.SetLocation(latitude, longitude);
-				l = locationConverter.ToAddress();
-			}
-			else {
-				l ="";
-			}
-			String desc = addDialogDescriptionEditText.getText().toString();
-			perUnit = '/' + perUnit; 
-			// create food item 
-			/* TODO GENERATE ENTRY ID MAYBE FROM THE SERVER ? */
-			FoodItem f = new FoodItem("100",name, perUnit, price, l, imageBitmap, desc);
-			// add it to the list
-			foodList.add(f);
-			// notify the view the list changed
-			NotifyView();
-		}
-	}
-	
-	
-	// if the locationManager is defined request updates on GPS and WIFI
-	public void RequestLocationUpdates() {
-		if(locationManager != null) {
-			// request GPS Updates
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-			// request Wi-Fi updates
-			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-		}
-	}
 	
 	// notify the listAdapter that additional view is added
 	// if anything addition needs to get notified moving forward i.e. the routine
@@ -429,9 +266,6 @@ public class MainListFrag extends Fragment implements LocationListener {
 			protected void onPostExecute(Void result) {
 				NotifyView();
 			}
-
-
-		
 
 	}
 

@@ -9,10 +9,10 @@ import java.util.TimerTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.onnen.virtualfarmersmarket.constants.MyResult;
 import com.onnen.virtualfarmersmarket.utils.AppUtils;
 import com.onnen.virtualfarmersmarket.utils.HttpGet;
 import com.onnen.virtualfarmersmarket.utils.HttpPost;
-import com.onnen.virtualfarmersmarket.utils.MyResult;
 import com.onnen.virtualfarmersmarket.utils.SecurePassword;
 import com.onnen.virtualfarmersmarket.utils.ServiceHandler;
 

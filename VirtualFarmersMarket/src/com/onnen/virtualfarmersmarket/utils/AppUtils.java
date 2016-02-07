@@ -19,6 +19,7 @@ public class AppUtils {
 	public static final String RESET_PASSWORD_REQ_ID = "100";
 	public static final String GET_PROFILE_INFO_REQ_ID = "200";
 	public static final String SAVE_PROFILE_INFO_REQ_ID = "201";
+	public static final String ADD_ITEM_FOR_SALE = "301";
 	
 	
 	public static ArrayList<HashMap<String, String>> GetData(JSONObject rootObject) throws JSONException {

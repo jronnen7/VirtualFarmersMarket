@@ -1,6 +1,6 @@
 package com.onnen.virtualfarmersmarket;
 
-import com.onnen.virtualfarmersmarket.utils.MyResult;
+import com.onnen.virtualfarmersmarket.constants.MyResult;
 
 public interface IResultHandler {
 	int onResult(String result);

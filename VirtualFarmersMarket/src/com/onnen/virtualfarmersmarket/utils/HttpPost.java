@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.onnen.virtualfarmersmarket.IResultHandler;
 import com.onnen.virtualfarmersmarket.LoginAct;
+import com.onnen.virtualfarmersmarket.constants.MyResult;
 
 import android.app.ProgressDialog;
 import android.content.Context;

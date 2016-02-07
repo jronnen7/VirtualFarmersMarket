@@ -1,9 +1,24 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#cccc"
+    android:orientation="vertical"
+    android:background="#cccc">
+    
+<ListView 
+    android:id="@+id/navigation_drawer_list"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:choiceMode="singleChoice"
     android:divider="@android:color/transparent"
     android:dividerHeight="0dp"
     tools:context="com.onnen.virtualfarmersmarket.NavigationDrawerFragment" />
+
+	<Button
+	    android:id="@+id/navigation_drawer_signout_button"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Sign Out"
+	    android:layout_marginBottom="30dp" />
+
+</LinearLayout>

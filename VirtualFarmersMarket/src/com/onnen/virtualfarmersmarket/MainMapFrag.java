@@ -11,29 +11,36 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.onnen.virtualfarmersmarket.utils.AppUtils;
 import com.onnen.virtualfarmersmarket.utils.CacheingEngine;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
 public class MainMapFrag extends Fragment{
 
 	private static MainMapFrag singleton;
+	private SharedPreferences sharedPrefs;
 	private GoogleMap map;
 	private CacheingEngine cache;
 	private HashMap<Marker, MyMarkerData> markersData;
 	
 	private MainMapFrag() {
 		markersData = new HashMap<Marker, MyMarkerData>();
-		this.cache = CacheingEngine.getInstance();
+		this.cache = CacheingEngine.getInstance();	
 	}
 
 	public static MainMapFrag GetInstance() {
@@ -52,11 +59,21 @@ public class MainMapFrag extends Fragment{
     public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.main_google_map);
+		this.sharedPrefs = getActivity().getSharedPreferences(AppUtils.APP_PREFERENCES, Context.MODE_PRIVATE);
+		
 		map = mapFrag.getMap();
 		map.setMyLocationEnabled(true);
-		
-		Double lat = cache.GetDouble("latitude");
-		Double longitude = cache.GetDouble("longitude");
+		Double lat = null;
+		Double longitude = null;
+		try {
+			lat = cache.GetDouble("latitude");
+			longitude = cache.GetDouble("longitude");
+		} catch (Exception e) {
+			String strLat = sharedPrefs.getString("latitude", "");
+			String strLong = sharedPrefs.getString("longitude", "");
+			lat = Double.valueOf(strLat);
+			longitude = Double.valueOf(strLong);
+		}
 		if(lat != null && longitude != null) {
 			LatLng point = new LatLng(lat, longitude);
 			if(point != null) {
@@ -97,8 +114,7 @@ public class MainMapFrag extends Fragment{
 	
 	
 	private void plotMarkers(ArrayList<MyMarkerData> data) {
-	    if(data.size() > 0)
-	    {
+	    if(data.size() > 0) {
 	        for (MyMarkerData iter : data) {
 
 	            // Create user marker with custom icon and other options
@@ -113,25 +129,32 @@ public class MainMapFrag extends Fragment{
 	    }
 	}
 	
-	public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter
-	{
+	public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 	    public MarkerInfoWindowAdapter() {
 	    }
 
 	    @Override
 	    public View getInfoWindow(Marker marker) {
-	        return null;
+
+	    	return null;
 	    }
 
 	    @Override
 	    public View getInfoContents(Marker marker) {
-	        View v  = getActivity().getLayoutInflater().inflate(R.layout.map_marker_info, null);
-
-	        MyMarkerData data = markersData.get(marker);
+	    	
+//	        View v  = getActivity().getLayoutInflater().inflate(R.layout.map_marker_info, null);
+//	    	MyMarkerData data = markersData.get(marker);
 
 	        // GET DATA AND SET OPTIONS
 
-	        return v;
+//	        return v;
+	        
+	    	SlidingPanel v = (SlidingPanel) getActivity().findViewById(R.id.map_marker_info);
+//	    	v.animate().translationY(v.getHeight()).setDuration(2000);
+	    	v.setVisibility(View.VISIBLE);
+	         Animation animShow = AnimationUtils.loadAnimation( getContext(), R.anim.popup_show);
+	         v.setAnimation(animShow);
+	    	return null;
 	    }
 	}
 }
