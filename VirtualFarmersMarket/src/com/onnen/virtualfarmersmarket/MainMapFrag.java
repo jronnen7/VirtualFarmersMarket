@@ -21,14 +21,20 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class MainMapFrag extends Fragment{
 
@@ -37,10 +43,15 @@ public class MainMapFrag extends Fragment{
 	private GoogleMap map;
 	private CacheingEngine cache;
 	private HashMap<Marker, MyMarkerData> markersData;
-	
+	private LinearLayout farmDataLayout, farmDataWrapper;
+	private TextView desc;
+	private Animation animHideFarmData, animShowFarmData, animFarmTitleShow, animFarmTitleHide;
+	private RelativeLayout farmTitle;
+	private Boolean isDataShown;
 	private MainMapFrag() {
 		markersData = new HashMap<Marker, MyMarkerData>();
 		this.cache = CacheingEngine.getInstance();	
+		isDataShown = false;
 	}
 
 	public static MainMapFrag GetInstance() {
@@ -58,37 +69,15 @@ public class MainMapFrag extends Fragment{
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.main_google_map);
-		this.sharedPrefs = getActivity().getSharedPreferences(AppUtils.APP_PREFERENCES, Context.MODE_PRIVATE);
+		Init();
+		SetListeners();
 		
-		map = mapFrag.getMap();
-		map.setMyLocationEnabled(true);
-		Double lat = null;
-		Double longitude = null;
-		try {
-			lat = cache.GetDouble("latitude");
-			longitude = cache.GetDouble("longitude");
-		} catch (Exception e) {
-			String strLat = sharedPrefs.getString("latitude", "");
-			String strLong = sharedPrefs.getString("longitude", "");
-			lat = Double.valueOf(strLat);
-			longitude = Double.valueOf(strLong);
-		}
-		if(lat != null && longitude != null) {
-			LatLng point = new LatLng(lat, longitude);
-			if(point != null) {
-				map.moveCamera(CameraUpdateFactory.newLatLngZoom(point,10));
-			}
-		}
-		
-		
-		setUpMapMarkerListener();
-		
+		// get markers for now we are faking them
 		ArrayList<MyMarkerData> tempMarkerData = new ArrayList<MyMarkerData>();
 
-		tempMarkerData.add(new MyMarkerData("Brasil", null, Double.parseDouble("39.971390"), Double.parseDouble("-105.495507")));
-		tempMarkerData.add(new MyMarkerData("United States", null, Double.parseDouble("39.976179"), Double.parseDouble("-105.260379")));
-		tempMarkerData.add(new MyMarkerData("Canada", null , Double.parseDouble("39.975110"), Double.parseDouble("-105.260379")));
+		tempMarkerData.add(new MyMarkerData("Great Farms", null, Double.parseDouble("39.971390"), Double.parseDouble("-105.495507")));
+		tempMarkerData.add(new MyMarkerData("Epic Sensation", null, Double.parseDouble("39.973109"), Double.parseDouble("-105.260379")));
+		tempMarkerData.add(new MyMarkerData("Really Un-Organic Produce", null , Double.parseDouble("39.975110"), Double.parseDouble("-105.263379")));
 		plotMarkers(tempMarkerData);
 	}
 
@@ -119,7 +108,6 @@ public class MainMapFrag extends Fragment{
 
 	            // Create user marker with custom icon and other options
 	            MarkerOptions markerOption = new MarkerOptions().position(new LatLng(iter.getLatitude(), iter.getLongitude()));
-//	            markerOption.icon(BitmapDescriptorFactory.fromBitmap(iter.getIcon()));
 
 	            Marker currentMarker = map.addMarker(markerOption);
 	            markersData.put(currentMarker, iter);
@@ -135,26 +123,149 @@ public class MainMapFrag extends Fragment{
 
 	    @Override
 	    public View getInfoWindow(Marker marker) {
-
 	    	return null;
 	    }
 
 	    @Override
 	    public View getInfoContents(Marker marker) {
-	    	
-//	        View v  = getActivity().getLayoutInflater().inflate(R.layout.map_marker_info, null);
-//	    	MyMarkerData data = markersData.get(marker);
-
-	        // GET DATA AND SET OPTIONS
-
-//	        return v;
+//	    	farmDataLayout.setVisibility(View.VISIBLE);
+	    	farmTitle.startAnimation(animFarmTitleShow);
+//	    	farmDataLayout.startAnimation(animShowFarmData);
+	        MyMarkerData data = markersData.get(marker);
 	        
-	    	SlidingPanel v = (SlidingPanel) getActivity().findViewById(R.id.map_marker_info);
-//	    	v.animate().translationY(v.getHeight()).setDuration(2000);
-	    	v.setVisibility(View.VISIBLE);
-	         Animation animShow = AnimationUtils.loadAnimation( getContext(), R.anim.popup_show);
-	         v.setAnimation(animShow);
+	        desc.setText(Html.fromHtml("<h2>"+data.getLabel()+"</h2>"));
 	    	return null;
 	    }
 	}
+	
+	
+
+	private void Init() {
+		SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.main_google_map);
+		this.sharedPrefs = getActivity().getSharedPreferences(AppUtils.APP_PREFERENCES, Context.MODE_PRIVATE);
+		
+		map = mapFrag.getMap();
+		map.setMyLocationEnabled(true);
+		Double lat = null;
+		Double longitude = null;
+		
+		try {
+			lat = cache.GetDouble("latitude");
+			longitude = cache.GetDouble("longitude");
+		} catch (Exception e) {
+			String strLat = sharedPrefs.getString("latitude", "");
+			String strLong = sharedPrefs.getString("longitude", "");
+			lat = Double.valueOf(strLat);
+			longitude = Double.valueOf(strLong);
+		}
+		if(lat != null && longitude != null) {
+			LatLng point = new LatLng(lat, longitude);
+			if(point != null) {
+				map.moveCamera(CameraUpdateFactory.newLatLngZoom(point,10));
+			}
+		}
+		
+		farmDataWrapper = (LinearLayout) getActivity().findViewById(R.id.main_map_frag_hidden_wrapper);
+		farmDataLayout = (LinearLayout) getActivity().findViewById(R.id.map_marker_info);
+		animHideFarmData = AnimationUtils.loadAnimation( getContext(), R.anim.popup_hide);
+		animHideFarmData.setAnimationListener(new AnimationListener (){
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				farmDataWrapper.setVisibility(View.GONE);
+				farmDataLayout.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				farmDataWrapper.setVisibility(View.VISIBLE);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {}
+			
+		});
+		animShowFarmData = AnimationUtils.loadAnimation( getContext(), R.anim.popup_show);
+		animShowFarmData.setAnimationListener(new AnimationListener (){
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				farmDataLayout.setVisibility(View.VISIBLE);
+				farmDataWrapper.setVisibility(View.VISIBLE);
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) { }
+
+			@Override
+			public void onAnimationRepeat(Animation animation) { }
+			
+		});
+		
+		farmTitle = (RelativeLayout) getActivity().findViewById(R.id.map_marker_info_title);
+		animFarmTitleShow = AnimationUtils.loadAnimation( getContext(), R.anim.popup_show);
+		animFarmTitleHide =  AnimationUtils.loadAnimation( getContext(), R.anim.popup_hide);
+		animFarmTitleShow.setAnimationListener(new AnimationListener (){
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				farmDataWrapper.setVisibility(View.VISIBLE);
+				farmTitle.setVisibility(View.VISIBLE);
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) { }
+
+			@Override
+			public void onAnimationRepeat(Animation animation) { }
+			
+		});
+		animFarmTitleHide.setAnimationListener(new AnimationListener (){
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				farmTitle.setVisibility(View.GONE);
+				farmDataWrapper.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				farmDataWrapper.setVisibility(View.VISIBLE);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {}
+			
+		});
+		
+		desc = (TextView) getActivity().findViewById(R.id.map_marker_info_desc);
+		
+	}
+	private void SetListeners() {
+		ImageView closeBtn = (ImageView) getActivity().findViewById(R.id.map_marker_info_close_btn);
+		closeBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(isDataShown) {
+					farmDataWrapper.startAnimation(animHideFarmData);
+					isDataShown = false;
+				} else {
+					farmTitle.startAnimation(animFarmTitleHide);  
+				}
+			}
+        });
+		farmTitle.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				farmDataLayout.startAnimation(animShowFarmData);
+				isDataShown = true;
+			}
+		});
+		
+		setUpMapMarkerListener();
+	}
+	
+
+
+
 }
